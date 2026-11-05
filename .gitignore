@@ -7,6 +7,7 @@ build/
 # Logos are sources here, even where a global gitignore excludes *.png
 !src/main/resources/**/*.png
 !/logo.png
+!screenshots/*.png
 
 # IntelliJ Platform Gradle Plugin caches
 .intellijPlatform/

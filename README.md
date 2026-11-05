@@ -1,11 +1,20 @@
-# Cobra torch
+# Cobra torch - Intelij Plugin
 
 <p align="center"><img src="logo.png" alt="Cobra torch" width="480"></p>
 
+# What is can do
+<img src="screenshots/2026-11-04_20-01-37.png" alt="Cobra torch" width="250"> <img src="screenshots/2026-11-04_20-02-11.png" alt="Cobra torch" width="300">
+
+## How to build
 ```sh
 ./gradlew build    # Windows: gradlew.bat build
-# result: build/distributions/cobra-torch-<version>.zip -> Settings | Plugins | ⚙ | Install Plugin from Disk...
 ```
+# How to install
+Find file:
+
+build/distributions/cobra-torch-<version>.zip
+
+Settings | Plugins | Install Plugin from Disk
 
 | Logo | Dependencies |
 |:---:|---|
