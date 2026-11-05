@@ -7,7 +7,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.20.0"
 }
 
-group = "com.prituladima.plugin.intelij"
+group = "com.prituladima.plugin.intellij"
 
 // ---- Version yyyy.mm.NNNN, kept in version.properties --------------------------------------------
 // NNNN goes up by 1 on every build (build, assemble, buildPlugin, signPlugin, publishPlugin) whose

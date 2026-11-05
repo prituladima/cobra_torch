@@ -1,4 +1,4 @@
-package com.prituladima.plugin.intelij;
+package com.prituladima.plugin.intellij;
 
 import com.intellij.ide.FileIconProvider;
 import com.intellij.openapi.project.Project;

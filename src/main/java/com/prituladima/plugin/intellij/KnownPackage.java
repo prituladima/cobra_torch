@@ -1,4 +1,4 @@
-package com.prituladima.plugin.intelij;
+package com.prituladima.plugin.intellij;
 
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Dependencies that get their official logo in the gutter; a click opens the project's website:
  * its own site if it has one, else its official docs site, else its repository.
- * Projects without a logo of their own use their organisation's (Hugging Face, PyTorch, Kaggle,
+ * Projects without a logo of their own use their organization's (Hugging Face, PyTorch, Kaggle,
  * EleutherAI) or parent project's (Jupyter, IPython, pandas, SciPy).
  * <p>
  * To add one: a constant here and its logo in {@code resources/icons/packages}: a 16x16 SVG, or a

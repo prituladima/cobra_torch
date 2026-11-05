@@ -1,4 +1,4 @@
-package com.prituladima.plugin.intelij;
+package com.prituladima.plugin.intellij;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ReadAction;

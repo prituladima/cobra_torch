@@ -1,4 +1,4 @@
-package com.prituladima.plugin.intelij;
+package com.prituladima.plugin.intellij;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.ide.IdeView;

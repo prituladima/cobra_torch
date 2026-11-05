@@ -1,7 +1,7 @@
 # Logo sources
 
 Each logo is the project's own, cropped to a square 16x16 mark; editor metadata, CSS classes and
-wordmarks were removed. Projects without a logo of their own use their organisation's or parent
+wordmarks were removed. Projects without a logo of their own use their organization's or parent
 project's. The logos are trademarks of their respective owners, shown only to identify the packages;
 this project is not affiliated with or endorsed by them, and the logos are not covered by its MIT license.
 

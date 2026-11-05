@@ -1,4 +1,4 @@
-package com.prituladima.plugin.intelij;
+package com.prituladima.plugin.intellij;
 
 import com.intellij.codeInsight.hints.declarative.AboveLineIndentedPosition;
 import com.intellij.codeInsight.hints.declarative.HintFormat;

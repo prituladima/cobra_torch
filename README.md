@@ -1,4 +1,4 @@
-# Cobra torch - Intelij Plugin
+# Cobra torch - IntelliJ Plugin
 
 <p align="center"><img src="logo.png" alt="Cobra torch" width="480"></p>
 

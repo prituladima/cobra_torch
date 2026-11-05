@@ -1,6 +1,6 @@
 <!-- version (version.properties) and idea-version (since-build only, no upper bound) are filled in by Gradle -->
 <idea-plugin>
-  <id>com.prituladima.plugin.intelij</id>
+  <id>com.prituladima.cobratorch</id>
   <name>Cobra torch</name>
   <vendor email="prituladima@gmail.com" url="https://github.com/prituladima/cobra_torch">prituladima</vendor>
   <description><![CDATA[
@@ -29,19 +29,19 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <codeInsight.lineMarkerProvider language="yaml"
-                                    implementationClass="com.prituladima.plugin.intelij.CondaEnvLineMarkerProvider"/>
+                                    implementationClass="com.prituladima.plugin.intellij.CondaEnvLineMarkerProvider"/>
     <!-- the line above line 1: "Conda env is not installed" / "Environment takes 2.07 GB" -->
     <codeInsight.declarativeInlayProvider language="yaml"
-                                          implementationClass="com.prituladima.plugin.intelij.CondaEnvSizeInlayProvider"
-                                          providerId="com.prituladima.plugin.intelij.envSize"
+                                          implementationClass="com.prituladima.plugin.intellij.CondaEnvSizeInlayProvider"
+                                          providerId="com.prituladima.cobratorch.envSize"
                                           isEnabledByDefault="true" group="OTHER_GROUP"
                                           bundle="messages.CondaEnvBundle"
                                           nameKey="inlay.env.size.name" descriptionKey="inlay.env.size.description"/>
   </extensions>
 
   <actions>
-    <action id="com.prituladima.plugin.intelij.NewCondaEnvFile"
-            class="com.prituladima.plugin.intelij.NewCondaEnvFileAction"
+    <action id="com.prituladima.cobratorch.NewCondaEnvFile"
+            class="com.prituladima.plugin.intellij.NewCondaEnvFileAction"
             text="Conda Env File" description="Create .conda_env.yml in this directory">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>
     </action>
