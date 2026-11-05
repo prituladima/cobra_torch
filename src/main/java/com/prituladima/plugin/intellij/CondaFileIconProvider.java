@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-/** Registered by META-INF/conda-python.xml, i.e. only when the Python plugin (PythonCore) is enabled. */
+/** The conda icon for .conda_env.yml instead of the YAML icon. */
 public final class CondaFileIconProvider implements FileIconProvider {
 
   @Override

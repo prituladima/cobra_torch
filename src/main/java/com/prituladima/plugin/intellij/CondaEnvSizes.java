@@ -1,16 +1,8 @@
 package com.prituladima.plugin.intellij;
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,16 +24,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Whether a conda environment is installed and how much its folder takes, measured in the background
  * and cached. Every few seconds the cheap {@link CondaEnvLocator#signature} of each environment shown
  * recently is compared with the last one; on a change (conda env update / remove, a new env) the folder
- * is measured again and the hints above line 1 of open .conda_env.yml files are refreshed.
+ * is measured again and the toolbars of open .conda_env.yml editors are refreshed.
  */
 @Service(Service.Level.APP)
 public final class CondaEnvSizes implements Disposable {
   private static final long POLL_SECONDS = 5;
   private static final long FORGET_AFTER_MS = TimeUnit.MINUTES.toMillis(10);
 
-  record Status(String label, @Nullable String tooltip) {}
+  /** {@code prefix}: the environment's folder, null while measuring or when it is not installed. */
+  record Status(String label, @Nullable String tooltip, @Nullable Path prefix) {}
 
-  static final Status MEASURING = new Status("Measuring environment size…", null);
+  static final Status MEASURING = new Status("Measuring environment size…", null, null);
 
   private static final class Entry {
     volatile @Nullable String signature;   // null until measured once
@@ -85,13 +78,15 @@ public final class CondaEnvSizes implements Disposable {
         String signature = CondaEnvLocator.signature(name);
         Path prefix = CondaEnvLocator.find(name);
         Status status = prefix == null
-            ? new Status("Conda env is not installed", "No conda environment named '" + name + "' was found")
-            : new Status("Environment takes " + humanSize(folderSize(prefix)), prefix.toString());
+            ? new Status("Conda env is not installed", "No conda environment named '" + name + "' was found", null)
+            : new Status("Conda environment takes " + humanSize(folderSize(prefix)), prefix.toString(), prefix);
+        boolean packagesChanged = !Objects.equals(e.signature, signature);
         e.signature = signature;
         if (!status.equals(e.status)) {
           e.status = status;
-          refreshHints();
+          refreshToolbars();
         }
+        if (packagesChanged) CondaEnvRefresh.hints(null);   // the installed versions next to the dependencies
       } finally {
         e.busy.set(false);
       }
@@ -144,18 +139,9 @@ public final class CondaEnvSizes implements Disposable {
     return String.format(Locale.ROOT, "%.2f %s", value, units[unit]);
   }
 
-  /** Re-runs the inlay hints of every open .conda_env.yml. */
-  private static void refreshHints() {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-        if (project.isDisposed()) continue;
-        for (VirtualFile vf : FileEditorManager.getInstance(project).getOpenFiles()) {
-          if (!CondaEnv.isCondaEnvFile(vf)) continue;
-          PsiFile psi = ReadAction.computeBlocking(() -> vf.isValid() ? PsiManager.getInstance(project).findFile(vf) : null);
-          if (psi != null) DaemonCodeAnalyzer.getInstance(project).restart(psi, "conda environment size changed");
-        }
-      }
-    });
+  /** Lets the toolbars of open .conda_env.yml editors show the new status. */
+  private static void refreshToolbars() {
+    CondaEnvRefresh.toolbars();
   }
 
   @Override

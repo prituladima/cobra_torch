@@ -33,9 +33,10 @@ this project is not affiliated with or endorsed by them, and the logos are not c
 | `eleutherai.svg`, `eleutherai_dark.svg` | lm-eval | eleuther.ai/assets/`eleutherai-logo.svg`, the mark only (white on dark, as in its favicon) |
 | `transformer-lens.png` | transformer-lens | github.com/TransformerLensOrg/TransformerLens, `assets/transformer_lens_logo.png` |
 | `beir.png` | beir | github.com/beir-cellar/beir, `images/color_logo_transparent_cropped.png`, the mark only |
-| `kaggle.png` | kagglehub, kaggle | kaggle.com/static/images/`favicon-new.ico`, its 16 and 32 px frames |
+| `kaggle.svg` | kagglehub, kaggle | kaggle.com/static/images/`site-logo.svg`, the "k" of the wordmark, in its blue #20BEFF (the same mark as kaggle.com/static/images/`favicon.ico`) |
 | `wandb.svg` | wandb | github.com/wandb/wandb, `assets/logo.svg`, the dot mark on its background |
-| conda icon (Python plugin) | conda-forge channel | JetBrains Python plugin, `PythonIcons.Python.Condaenv` (not bundled) |
+| `toolbar/nvidia.png` | GPU in the env-file toolbar | developer.nvidia.com favicon (the same file as docs.nvidia.com/cuda/_static/favicon.ico), its 16 and 32 px frames |
+| `conda/anaconda.svg`, `conda/anaconda_dark.svg` | `.conda_env.yml` file icon, conda-forge channel, File \| New | the Anaconda ring as drawn by JetBrains for its Python plugin: github.com/JetBrains/intellij-community, `python/conda/common/resources/images/intellij/python/community/impl/conda/common/expui/`; Apache License 2.0 (www.apache.org/licenses/LICENSE-2.0), its copyright line kept in each file |
 
 No official logo was found (repository, docs site and favicon checked) for pip, bitsandbytes, faiss,
 h5py, flash-linear-attention, autoawq, jiwer, sacrebleu, pycocoevalcap, rank-bm25, soundfile, gdown,

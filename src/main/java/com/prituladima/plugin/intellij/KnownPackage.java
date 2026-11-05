@@ -74,8 +74,8 @@ enum KnownPackage implements GutterLink {
   BEIR("BEIR", "https://github.com/beir-cellar/beir", "beir.png", "beir"),
 
   // Data and experiment tracking
-  KAGGLEHUB("kagglehub", "https://github.com/Kaggle/kagglehub", "kaggle.png", "kagglehub"),
-  KAGGLE("Kaggle CLI", "https://github.com/Kaggle/kaggle-cli", "kaggle.png", "kaggle"),
+  KAGGLEHUB("kagglehub", "https://github.com/Kaggle/kagglehub", "kaggle.svg", "kagglehub"),
+  KAGGLE("Kaggle CLI", "https://github.com/Kaggle/kaggle-cli", "kaggle.svg", "kaggle"),
   WANDB("Weights & Biases", "https://wandb.ai", "wandb.svg", "wandb");
 
   private final String title;

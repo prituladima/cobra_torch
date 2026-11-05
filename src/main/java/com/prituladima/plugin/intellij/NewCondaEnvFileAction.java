@@ -11,7 +11,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
  */
 public final class NewCondaEnvFileAction extends AnAction implements DumbAware {
 
+  private static final Logger LOG = Logger.getInstance(NewCondaEnvFileAction.class);
   private static final String TEMPLATE = "/templates/conda_env.yml";
 
   public NewCondaEnvFileAction() {
@@ -73,7 +74,7 @@ public final class NewCondaEnvFileAction extends AnAction implements DumbAware {
               return created;
             });
       } catch (IOException ex) {
-        Messages.showErrorDialog(project, ex.getMessage(), "Cannot Create " + CondaEnv.FILE_NAME);
+        LOG.warn("Cannot create " + CondaEnv.FILE_NAME + " in " + folder.getPath(), ex);
         return;
       }
     }

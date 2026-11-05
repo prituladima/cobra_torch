@@ -7,43 +7,73 @@
     Tools for conda environment files named <code>.conda_env.yml</code>:
     <ul>
       <li>the conda icon instead of the YAML icon;</li>
-      <li>gutter, line 1: <code>conda env update -f .conda_env.yml --prune</code>;</li>
-      <li>gutter, line 2: <code>conda env remove -n &lt;name from the file&gt;</code>;</li>
+      <li>a toolbar above the editor: the environment's size (or "Conda env is not installed"), the NVIDIA GPU
+          (model | VRAM | CUDA version), and buttons that run
+          <code>conda env update -f .conda_env.yml --prune</code>,
+          <code>conda run --live-stream -n &lt;name&gt; jupyter lab</code> and
+          <code>conda env remove -n &lt;name&gt;</code>; a button opens the environment's folder in the file
+          manager;</li>
+      <li>a click on the size lists every conda environment with its size and a remove button;</li>
+      <li>the installed version after each dependency that has none in the file, as a hint that is not part
+          of the file;</li>
+      <li>a remote computer over SSH (password, key or SSH agent): the toolbar then shows its environment,
+          GPU and versions, and its buttons run there; JupyterLab opens here through an SSH tunnel;</li>
       <li>the official logo next to well-known dependencies (Python, pandas, NumPy, SciPy, scikit-learn,
           Matplotlib, Plotly, Jupyter, PyTorch, Hugging Face, vLLM, ...) and the conda icon next to the
           conda-forge channel; a click opens the project's website;</li>
-      <li>a line above line 1: "Conda env is not installed" or "Environment takes 2.07 GB";</li>
       <li>the same logos next to imports in .py files and Jupyter notebooks;</li>
+      <li>a click on the GPU (or <b>Tools | System Monitor</b>) opens the System Monitor: every CPU core, RAM,
+          VRAM and GPU load over the last minute, CPU and GPU temperature, GPU power, free disk space and the
+          processes holding VRAM, for this computer or the connected remote one;</li>
       <li><b>File | New | Conda Env File</b>.</li>
     </ul>
-    The conda commands run in a new Terminal tab, in the file's directory.
-    <p>The package logos are trademarks of their respective owners and are shown only to identify the
-    packages. Cobra torch is not affiliated with, endorsed by or sponsored by any of them.</p>
+    The conda commands run in a new Terminal tab, in the file's directory; on a remote computer, in the
+    Run tool window.
+    <p>The Anaconda, NVIDIA and package logos are trademarks of their respective owners and are shown only
+    to identify the software. Cobra torch is not affiliated with, endorsed by or sponsored by any of them.</p>
   ]]></description>
 
   <depends>com.intellij.modules.platform</depends>
   <depends>org.jetbrains.plugins.terminal</depends>
   <depends>org.jetbrains.plugins.yaml</depends>
-  <!-- The conda icon comes from the Python plugin; without it everything else still works. -->
+  <!-- The logos next to Python imports need the Python plugin; without it everything else still works. -->
   <depends optional="true" config-file="conda-python.xml">PythonCore</depends>
+  <!-- JNA for the system monitor (OSHI): part of the platform up to 2026.2, a bundled plugin from 2026.3. -->
+  <depends optional="true" config-file="cobra-jna.xml">com.intellij.modules.jna</depends>
+
+  <resource-bundle>messages.CondaEnvBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
+    <fileIconProvider implementation="com.prituladima.plugin.intellij.CondaFileIconProvider" order="first"/>
+    <toolWindow id="CobraTorchMonitor" anchor="bottom" icon="AllIcons.Toolwindows.ToolWindowProfiler"
+                factoryClass="com.prituladima.plugin.intellij.MonitorToolWindowFactory" doNotActivateOnStart="true"/>
     <codeInsight.lineMarkerProvider language="yaml"
                                     implementationClass="com.prituladima.plugin.intellij.CondaEnvLineMarkerProvider"/>
-    <!-- the line above line 1: "Conda env is not installed" / "Environment takes 2.07 GB" -->
     <codeInsight.declarativeInlayProvider language="yaml"
-                                          implementationClass="com.prituladima.plugin.intellij.CondaEnvSizeInlayProvider"
-                                          providerId="com.prituladima.cobratorch.envSize"
-                                          isEnabledByDefault="true" group="OTHER_GROUP"
+                                          implementationClass="com.prituladima.plugin.intellij.CondaEnvVersionInlayProvider"
+                                          providerId="com.prituladima.cobratorch.versions"
+                                          isEnabledByDefault="true" group="VALUES_GROUP"
                                           bundle="messages.CondaEnvBundle"
-                                          nameKey="inlay.env.size.name" descriptionKey="inlay.env.size.description"/>
+                                          nameKey="inlay.versions.name" descriptionKey="inlay.versions.description"/>
   </extensions>
+
+  <projectListeners>
+    <!-- the toolbar at the top of .conda_env.yml editors -->
+    <listener class="com.prituladima.plugin.intellij.CondaEnvToolbar"
+              topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+  </projectListeners>
 
   <actions>
     <action id="com.prituladima.cobratorch.NewCondaEnvFile"
             class="com.prituladima.plugin.intellij.NewCondaEnvFileAction"
             text="Conda Env File" description="Create .conda_env.yml in this directory">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>
+    </action>
+    <action id="com.prituladima.cobratorch.SystemMonitor"
+            class="com.prituladima.plugin.intellij.OpenMonitorAction"
+            text="System Monitor" description="CPU cores, RAM, VRAM, GPU load and temperatures over the last minute"
+            icon="AllIcons.Toolwindows.ToolWindowProfiler">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
     </action>
   </actions>
 </idea-plugin>

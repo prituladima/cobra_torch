@@ -46,8 +46,8 @@ Settings | Plugins | Install Plugin from Disk
 | <picture><source media="(prefers-color-scheme: dark)" srcset="src/main/resources/icons/packages/eleutherai_dark.svg"><img src="src/main/resources/icons/packages/eleutherai.svg" width="32" height="32"></picture> | `lm-eval` |
 | <img src="src/main/resources/icons/packages/transformer-lens@2x.png" width="32" height="32"> | `transformer-lens` |
 | <img src="src/main/resources/icons/packages/beir@2x.png" width="32" height="32"> | `beir` |
-| <img src="src/main/resources/icons/packages/kaggle@2x.png" width="32" height="32"> | `kagglehub`, `kaggle` |
+| <img src="src/main/resources/icons/packages/kaggle.svg" width="32" height="32"> | `kagglehub`, `kaggle` |
 | <img src="src/main/resources/icons/packages/wandb.svg" width="32" height="32"> | `wandb` |
 
-The package logos are trademarks of their respective owners and are shown only to identify the packages.
-Cobra torch is not affiliated with, endorsed by or sponsored by any of them.
+The Anaconda, NVIDIA and package logos are trademarks of their respective owners and are shown only to identify
+the software. Cobra torch is not affiliated with, endorsed by or sponsored by any of them.

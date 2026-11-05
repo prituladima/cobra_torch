@@ -75,6 +75,17 @@ repositories {
 }
 
 dependencies {
+    // SSH for the remote computer (password and key login, commands, the Jupyter port forward);
+    // pure Java, so it works the same on Linux, Windows and macOS. BSD-style license.
+    implementation("com.github.mwiede:jsch:${providers.gradleProperty("jschVersion").get()}")
+    // CPU cores, memory and temperatures for the system monitor, on Linux, Windows and macOS. MIT license.
+    // Built against the JNA the IDE ships (in the platform up to 2026.2, the bundled JNA plugin from 2026.3),
+    // which it uses instead of a copy of its own; the IDE also ships SLF4J.
+    implementation("com.github.oshi:oshi-core:${providers.gradleProperty("oshiVersion").get()}") {
+        exclude(group = "net.java.dev.jna")
+        exclude(group = "org.slf4j")
+    }
+
     intellijPlatform {
         intellijIdea(providers.gradleProperty("platformVersion"))
         bundledPlugins("org.jetbrains.plugins.terminal", "org.jetbrains.plugins.yaml")

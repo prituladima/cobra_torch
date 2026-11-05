@@ -1,7 +1,6 @@
 <!-- Loaded only when the Python plugin (PythonCore) is enabled. -->
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
-    <fileIconProvider implementation="com.prituladima.plugin.intellij.CondaFileIconProvider" order="first"/>
     <!-- package logos next to imports; Python also covers the code cells of Jupyter notebooks -->
     <codeInsight.lineMarkerProvider language="Python"
                                     implementationClass="com.prituladima.plugin.intellij.ImportLineMarkerProvider"/>

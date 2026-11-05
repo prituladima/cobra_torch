@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -45,14 +46,72 @@ final class CondaEnvLocator {
   /** Changes whenever the environment appears, disappears, moves, or has packages installed or removed. */
   static String signature(String name) {
     Path p = find(name);
-    if (p == null) return "absent";
-    long stamp;
+    return p == null ? "absent" : p + "|" + stamp(p);
+  }
+
+  /**
+   * Changes when conda or pip installs or removes packages: conda writes conda-meta/history, pip adds and
+   * deletes folders in site-packages.
+   */
+  static String stamp(Path prefix) {
+    StringBuilder sb = new StringBuilder().append(mtime(prefix.resolve("conda-meta").resolve("history")));
+    for (Path sp : sitePackages(prefix)) sb.append('|').append(mtime(sp));
+    return sb.toString();
+  }
+
+  private static long mtime(Path p) {
     try {
-      stamp = Files.getLastModifiedTime(p.resolve("conda-meta").resolve("history")).toMillis();
+      return Files.getLastModifiedTime(p).toMillis();
     } catch (IOException e) {
-      stamp = -1;
+      return -1;
     }
-    return p + "|" + stamp;
+  }
+
+  /** {@code lib/python3.X/site-packages} on Linux and macOS, {@code Lib/site-packages} on Windows. */
+  static List<Path> sitePackages(Path prefix) {
+    List<Path> dirs = new ArrayList<>();
+    Path windows = prefix.resolve("Lib").resolve("site-packages");
+    if (Files.isDirectory(windows)) dirs.add(windows);
+    try (DirectoryStream<Path> pythons = Files.newDirectoryStream(prefix.resolve("lib"), "python*")) {
+      for (Path py : pythons) {
+        Path sp = py.resolve("site-packages");
+        if (Files.isDirectory(sp)) dirs.add(sp);
+      }
+    } catch (IOException ignored) {
+      // no lib folder
+    }
+    return dirs;
+  }
+
+  /** Every environment on this computer, conda installations (base) first. */
+  static List<Path> all() {
+    Set<Path> envs = new LinkedHashSet<>();
+    for (Path root : roots()) if (isEnv(root)) envs.add(root);
+    for (Path dir : envsDirs()) {
+      try (DirectoryStream<Path> children = Files.newDirectoryStream(dir)) {
+        for (Path c : children) if (isEnv(c)) envs.add(c);
+      } catch (IOException ignored) {
+        // no such folder
+      }
+    }
+    for (Path p : registered()) if (isEnv(p)) envs.add(p);
+    Set<Path> seen = new LinkedHashSet<>();
+    List<Path> unique = new ArrayList<>();
+    for (Path p : envs) if (seen.add(real(p))) unique.add(p);
+    return unique;
+  }
+
+  /** A conda installation's own environment, base, rather than one in its envs folder. */
+  static boolean isRoot(Path prefix) {
+    return Files.isDirectory(prefix.resolve("condabin"));
+  }
+
+  private static Path real(Path p) {
+    try {
+      return p.toRealPath();
+    } catch (IOException e) {
+      return p.toAbsolutePath().normalize();
+    }
   }
 
   private static boolean isEnv(Path p) {

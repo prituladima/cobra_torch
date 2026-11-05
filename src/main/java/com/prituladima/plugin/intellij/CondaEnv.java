@@ -6,24 +6,18 @@ import com.intellij.openapi.application.WriteIntentReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.terminal.frontend.toolwindow.TerminalToolWindowTab;
 import com.intellij.terminal.frontend.toolwindow.TerminalToolWindowTabsManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
-import java.awt.datatransfer.StringSelection;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** The .conda_env.yml file: its name, its env name, and the conda commands run from the gutter. */
+/** The .conda_env.yml file: its name, its env name, and the conda commands of its toolbar. */
 final class CondaEnv {
   static final String FILE_NAME = ".conda_env.yml";
 
@@ -33,54 +27,60 @@ final class CondaEnv {
 
   private CondaEnv() {}
 
-  /** One gutter button: the line (0-based) it sits on, its icon, and the command it runs. */
+  /**
+   * A toolbar button: one plain conda command, run in a new Terminal tab in the file's directory.
+   * Nothing is checked first: if the environment does not exist, conda says so in the terminal.
+   */
   enum Command {
-    UPDATE(0, AllIcons.Actions.Refresh, "Update conda environment"),
-    REMOVE(1, AllIcons.Actions.GC, "Remove conda environment");   // GC renders as a trash bin
+    UPDATE(AllIcons.Actions.Refresh, "Update environment", "update"),
+    JUPYTER(KnownPackage.JUPYTERLAB.icon(), "Open JupyterLab", "jupyter"),
+    REMOVE(AllIcons.Actions.GC, "Remove environment", "remove");   // GC renders as a trash bin
 
-    final int line;
     final Icon icon;
     final String title;
+    private final String tab;
 
-    Command(int line, Icon icon, String title) {
-      this.line = line;
+    Command(Icon icon, String title, String tab) {
       this.icon = icon;
       this.title = title;
+      this.tab = tab;
     }
 
-    /**
-     * The shell command for this file, or null when REMOVE cannot find `name:`.
-     * conda has no `env remove -f <file>`, so REMOVE uses the env name from the file.
-     */
+    /** The shell command, or null when JUPYTER / REMOVE have no top-level `name:` to use. */
     @Nullable String commandLine(@NotNull VirtualFile file) {
       if (this == UPDATE) return "conda env update -f " + quote(file.getName()) + " --prune";
       String env = envName(file);
-      return env == null ? null : "conda env remove -n " + quote(env);
+      if (env == null) return null;
+      return this == JUPYTER
+          ? "conda run --live-stream -n " + quote(env) + " jupyter lab"
+          : "conda env remove -n " + quote(env);
     }
 
-    String tooltip(PsiElement anchor) {
-      VirtualFile file = fileOf(anchor);
-      String cmd = file == null ? null : commandLine(file);
-      return cmd == null ? title : title + ": " + cmd;
+    /** The command as shown in the button's tooltip: here, or on the connected remote computer. */
+    @Nullable String describe(@NotNull Project project, @NotNull VirtualFile file) {
+      String cmd = commandLine(file);
+      RemoteHost.Remote remote = RemoteHost.connected(project);
+      return cmd == null || remote == null ? cmd : remote.label() + ": " + cmd + (this == JUPYTER ? " --no-browser, through an SSH tunnel" : "");
     }
 
-    void run(PsiElement anchor) {
-      VirtualFile file = fileOf(anchor);
-      if (file == null || file.getParent() == null) return;
-      Project project = anchor.getProject();
+    /** The tab or console title, such as "conda update my-env". */
+    String title(@Nullable String env) {
+      return "conda " + tab + (env == null ? "" : " " + env);
+    }
 
+    void run(@NotNull Project project, @NotNull VirtualFile file) {
+      VirtualFile dir = file.getParent();
+      String cmd = commandLine(file);
+      if (dir == null || cmd == null) return;
       FileDocumentManager fdm = FileDocumentManager.getInstance();
       Document doc = fdm.getDocument(file);
-      if (doc != null) WriteIntentReadAction.run((Runnable) () -> fdm.saveDocument(doc));  // conda reads the disk copy
-
-      String cmd = commandLine(file);
-      if (cmd == null) {
-        Messages.showErrorDialog(project, "No top-level 'name:' found in " + file.getPresentableUrl(), title);
+      if (doc != null) WriteIntentReadAction.run((Runnable) () -> fdm.saveDocument(doc));   // conda reads the disk copy
+      RemoteHost.Remote remote = RemoteHost.connected(project);
+      if (remote != null) {
+        remote.run(project, this, file);
         return;
       }
-      String env = envName(file);
-      String tab = "conda " + name().toLowerCase(Locale.ROOT) + (env == null ? "" : " " + env);
-      runInTerminal(project, nativePath(file.getParent()), tab, cmd, title);
+      runInTerminal(project, nativePath(dir), title(envName(file)), cmd);
     }
   }
 
@@ -103,9 +103,9 @@ final class CondaEnv {
 
   /**
    * Runs the command in a new Terminal tab. The terminal API has changed across IDE versions, so a
-   * missing API falls back to the older one, and then to putting the command on the clipboard.
+   * missing API falls back to the older one; with neither, the command is only logged.
    */
-  static void runInTerminal(Project project, String workDir, String tabName, String command, String title) {
+  static void runInTerminal(Project project, String workDir, String tabName, String command) {
     try {
       ReworkedTerminal.run(project, workDir, tabName, command);
       return;
@@ -114,17 +114,13 @@ final class CondaEnv {
     }
     try {
       ClassicTerminal.run(project, workDir, tabName, command);
-      return;
     } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
-      LOG.warn("No usable terminal API", e);
+      LOG.warn("No usable terminal API, not run: " + command, e);
     }
-    CopyPasteManager.getInstance().setContents(new StringSelection(command));
-    Messages.showInfoMessage(project,
-        "Could not open a Terminal tab. Run this in " + workDir + " (it is on the clipboard):\n\n" + command, title);
   }
 
   /** OS-native path (C:\... on Windows), which the terminal expects as its working directory. */
-  private static String nativePath(VirtualFile dir) {
+  static String nativePath(VirtualFile dir) {
     try {
       return dir.toNioPath().toString();
     } catch (UnsupportedOperationException e) {
@@ -132,16 +128,8 @@ final class CondaEnv {
     }
   }
 
-  private static @Nullable VirtualFile fileOf(PsiElement anchor) {
-    return ReadAction.computeBlocking(() -> {
-      if (!anchor.isValid()) return null;
-      PsiFile psi = anchor.getContainingFile();
-      return psi == null ? null : psi.getViewProvider().getVirtualFile();
-    });
-  }
-
   /** Bare when safe, else double quotes: understood by bash, zsh, fish, PowerShell and cmd alike. */
-  private static String quote(String s) {
+  static String quote(String s) {
     return SHELL_SAFE.matcher(s).matches() ? s : '"' + s + '"';
   }
 
