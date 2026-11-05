@@ -1,0 +1,9 @@
+# Same checkout on Linux, macOS and Windows: the Unix wrapper must keep LF, the Windows one CRLF.
+* text=auto
+gradlew text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.jar binary
+*.png binary

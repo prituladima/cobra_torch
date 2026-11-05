@@ -1,0 +1,5 @@
+<!-- PyTorch symbol, pytorch.org/wp-content/uploads/2024/10/logo.svg (wordmark removed) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="-13.38 535.17 101.26 101.26">
+<path fill="#ee4c2c" d="M63.1,567.3l-6.6,6.6c10.8,10.8,10.8,28.2,0,38.8c-10.8,10.8-28.2,10.8-38.8,0c-10.8-10.8-10.8-28.2,0-38.8 l0,0l17.1-17.1l2.4-2.4l0,0v-12.9l-25.8,25.8c-14.4,14.4-14.4,37.6,0,52s37.6,14.4,51.7,0C77.5,604.8,77.5,581.7,63.1,567.3z"/>
+<circle fill="#ee4c2c" cx="50.2" cy="560.9" r="4.8"/>
+</svg>

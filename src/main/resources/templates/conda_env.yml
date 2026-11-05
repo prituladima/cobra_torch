@@ -1,0 +1,21 @@
+name: ${ENV_NAME}
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.11.11
+  - pandas
+  - pandas-stubs
+  - numpy
+  - scipy-stubs
+  - scikit-learn
+  - tqdm
+  - jupyterlab
+  - notebook
+  - ipywidgets
+  - ipykernel
+  - matplotlib
+  - pip
+  - pip:
+      - kagglehub

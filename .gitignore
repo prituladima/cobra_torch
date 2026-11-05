@@ -1,0 +1,21 @@
+# Gradle
+.gradle/
+.kotlin/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Logos are sources here, even where a global gitignore excludes *.png
+!src/main/resources/**/*.png
+
+# IntelliJ Platform Gradle Plugin caches
+.intellijPlatform/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# OS
+.DS_Store

@@ -1,0 +1,47 @@
+<!-- version and idea-version (since-build only, no upper bound) are filled in by Gradle from gradle.properties -->
+<idea-plugin>
+  <id>com.prituladima.plugin.intelij</id>
+  <name>Cobra torch</name>
+  <vendor>prituladima</vendor>
+  <description><![CDATA[
+    Tools for conda environment files named <code>.conda_env.yml</code>:
+    <ul>
+      <li>the conda icon instead of the YAML icon;</li>
+      <li>gutter, line 1: <code>conda env update -f .conda_env.yml --prune</code>;</li>
+      <li>gutter, line 2: <code>conda env remove -n &lt;name from the file&gt;</code>;</li>
+      <li>the official logo next to well-known dependencies (Python, pandas, NumPy, SciPy, scikit-learn,
+          Matplotlib, Plotly, Jupyter, PyTorch, Hugging Face, vLLM, ...) and the conda icon next to the
+          conda-forge channel; a click opens the project's website;</li>
+      <li>a line above line 1: "Conda env is not installed" or "Environment takes 2.07 GB";</li>
+      <li>the same logos next to imports in .py files and Jupyter notebooks;</li>
+      <li><b>File | New | Conda Env File</b>.</li>
+    </ul>
+    The conda commands run in a new Terminal tab, in the file's directory.
+  ]]></description>
+
+  <depends>com.intellij.modules.platform</depends>
+  <depends>org.jetbrains.plugins.terminal</depends>
+  <depends>org.jetbrains.plugins.yaml</depends>
+  <!-- The conda icon comes from the Python plugin; without it everything else still works. -->
+  <depends optional="true" config-file="conda-python.xml">PythonCore</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <codeInsight.lineMarkerProvider language="yaml"
+                                    implementationClass="com.prituladima.plugin.intelij.CondaEnvLineMarkerProvider"/>
+    <!-- the line above line 1: "Conda env is not installed" / "Environment takes 2.07 GB" -->
+    <codeInsight.declarativeInlayProvider language="yaml"
+                                          implementationClass="com.prituladima.plugin.intelij.CondaEnvSizeInlayProvider"
+                                          providerId="com.prituladima.plugin.intelij.envSize"
+                                          isEnabledByDefault="true" group="OTHER_GROUP"
+                                          bundle="messages.CondaEnvBundle"
+                                          nameKey="inlay.env.size.name" descriptionKey="inlay.env.size.description"/>
+  </extensions>
+
+  <actions>
+    <action id="com.prituladima.plugin.intelij.NewCondaEnvFile"
+            class="com.prituladima.plugin.intelij.NewCondaEnvFileAction"
+            text="Conda Env File" description="Create .conda_env.yml in this directory">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>
+    </action>
+  </actions>
+</idea-plugin>

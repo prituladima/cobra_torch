@@ -1,0 +1,20 @@
+<!-- Plotly logo mark, plotly.com/all_static/images/logo-white.svg (dark themes), wordmark removed -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="42.74 20.33 66.27 66.27">
+<defs><linearGradient id="plotly-dots" x1="-100.13" y1="276.9" x2="-42.13" y2="276.9" gradientTransform="translate(147 -240)" gradientUnits="userSpaceOnUse"> <stop offset="0" stop-color="#ff2c6d"/> <stop offset="1" stop-color="#7fe4ff"/> </linearGradient></defs>
+<circle fill="#8c99cd" cx="84.16" cy="45.19" r="4.14"/>
+<circle fill="#8c99cd" cx="100.73" cy="28.61" r="4.14"/>
+<circle fill="#8c99cd" cx="84.16" cy="28.61" r="4.14"/>
+<circle fill="#8c99cd" cx="67.59" cy="28.61" r="4.14"/>
+<circle fill="#8c99cd" cx="51.02" cy="28.61" r="4.14"/>
+<circle fill="#8c99cd" cx="51.02" cy="45.19" r="4.14"/>
+<circle fill="url(#plotly-dots)" cx="84.16" cy="45.19" r="4.14"/>
+<circle fill="url(#plotly-dots)" cx="100.73" cy="28.61" r="4.14"/>
+<circle fill="url(#plotly-dots)" cx="84.16" cy="28.61" r="4.14"/>
+<circle fill="url(#plotly-dots)" cx="67.59" cy="28.61" r="4.14"/>
+<circle fill="url(#plotly-dots)" cx="51.02" cy="28.61" r="4.14"/>
+<circle fill="url(#plotly-dots)" cx="51.02" cy="45.19" r="4.14"/>
+<path fill="#fff" d="M51.02,57.61c-2.29,0-4.14,1.85-4.14,4.14v16.57c0,2.29,1.85,4.14,4.14,4.14s4.14-1.85,4.14-4.14v-16.57c0-2.29-1.85-4.14-4.14-4.14Z"/>
+<path fill="#fff" d="M84.16,57.61c-2.29,0-4.14,1.85-4.14,4.14v16.57c0,2.29,1.85,4.14,4.14,4.14s4.14-1.85,4.14-4.14v-16.57c0-2.29-1.85-4.14-4.14-4.14Z"/>
+<path fill="#fff" d="M67.59,41.04c-2.29,0-4.14,1.85-4.14,4.14v33.14c0,2.29,1.85,4.14,4.14,4.14s4.14-1.85,4.14-4.14v-33.14c0-2.29-1.85-4.14-4.14-4.14Z"/>
+<path fill="#fff" d="M100.73,41.04c-2.29,0-4.14,1.85-4.14,4.14v33.14c0,2.29,1.85,4.14,4.14,4.14s4.14-1.85,4.14-4.14v-33.14c0-2.29-1.85-4.14-4.14-4.14Z"/>
+</svg>
