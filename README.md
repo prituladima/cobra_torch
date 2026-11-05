@@ -2,6 +2,8 @@
 
 <p align="center"><img src="logo.png" alt="Cobra torch" width="480"></p>
 
+The Cobra torch logos (`logo.png` and the plugin icon) were generated with ChatGPT.
+
 # What it can do
 <img src="screenshots/2026-11-04_20-01-37.png" alt="Cobra torch" width="250"> <img src="screenshots/2026-11-04_20-02-11.png" alt="Cobra torch" width="300">
 
@@ -46,3 +48,6 @@ Settings | Plugins | Install Plugin from Disk
 | <img src="src/main/resources/icons/packages/beir@2x.png" width="32" height="32"> | `beir` |
 | <img src="src/main/resources/icons/packages/kaggle@2x.png" width="32" height="32"> | `kagglehub`, `kaggle` |
 | <img src="src/main/resources/icons/packages/wandb.svg" width="32" height="32"> | `wandb` |
+
+The package logos are trademarks of their respective owners and are shown only to identify the packages.
+Cobra torch is not affiliated with, endorsed by or sponsored by any of them.

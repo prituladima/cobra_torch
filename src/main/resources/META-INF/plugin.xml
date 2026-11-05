@@ -1,8 +1,8 @@
-<!-- version and idea-version (since-build only, no upper bound) are filled in by Gradle from gradle.properties -->
+<!-- version (version.properties) and idea-version (since-build only, no upper bound) are filled in by Gradle -->
 <idea-plugin>
   <id>com.prituladima.plugin.intelij</id>
   <name>Cobra torch</name>
-  <vendor>prituladima</vendor>
+  <vendor email="prituladima@gmail.com" url="https://github.com/prituladima/cobra_torch">prituladima</vendor>
   <description><![CDATA[
     Tools for conda environment files named <code>.conda_env.yml</code>:
     <ul>
@@ -17,6 +17,8 @@
       <li><b>File | New | Conda Env File</b>.</li>
     </ul>
     The conda commands run in a new Terminal tab, in the file's directory.
+    <p>The package logos are trademarks of their respective owners and are shown only to identify the
+    packages. Cobra torch is not affiliated with, endorsed by or sponsored by any of them.</p>
   ]]></description>
 
   <depends>com.intellij.modules.platform</depends>

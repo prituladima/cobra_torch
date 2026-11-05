@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -79,7 +79,7 @@ public final class NewCondaEnvFileAction extends AnAction implements DumbAware {
     }
 
     VirtualFile target = file;
-    FileEditorManager.getInstance(project).openFile(target, true);
+    new OpenFileDescriptor(project, target).navigate(true);
     PsiFile psi = ReadAction.computeBlocking(() -> PsiManager.getInstance(project).findFile(target));
     if (psi != null) view.selectElement(psi);
   }

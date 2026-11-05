@@ -2,7 +2,8 @@
 
 Each logo is the project's own, cropped to a square 16x16 mark; editor metadata, CSS classes and
 wordmarks were removed. Projects without a logo of their own use their organisation's or parent
-project's. The logos are trademarks of their respective owners.
+project's. The logos are trademarks of their respective owners, shown only to identify the packages;
+this project is not affiliated with or endorsed by them, and the logos are not covered by its MIT license.
 
 | File | Used for | Source |
 |---|---|---|
@@ -34,7 +35,7 @@ project's. The logos are trademarks of their respective owners.
 | `beir.png` | beir | github.com/beir-cellar/beir, `images/color_logo_transparent_cropped.png`, the mark only |
 | `kaggle.png` | kagglehub, kaggle | kaggle.com/static/images/`favicon-new.ico`, its 16 and 32 px frames |
 | `wandb.svg` | wandb | github.com/wandb/wandb, `assets/logo.svg`, the dot mark on its background |
-| conda icon (Python plugin) | conda-forge channel | `PythonCommunityImplCondaIcons.Anaconda` |
+| conda icon (Python plugin) | conda-forge channel | JetBrains Python plugin, `PythonIcons.Python.Condaenv` (not bundled) |
 
 No official logo was found (repository, docs site and favicon checked) for pip, bitsandbytes, faiss,
 h5py, flash-linear-attention, autoawq, jiwer, sacrebleu, pycocoevalcap, rank-bm25, soundfile, gdown,
