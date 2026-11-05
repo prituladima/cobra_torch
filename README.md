@@ -2,7 +2,7 @@
 
 <p align="center"><img src="logo.png" alt="Cobra torch" width="480"></p>
 
-# What is can do
+# What it can do
 <img src="screenshots/2026-11-04_20-01-37.png" alt="Cobra torch" width="250"> <img src="screenshots/2026-11-04_20-02-11.png" alt="Cobra torch" width="300">
 
 ## How to build
