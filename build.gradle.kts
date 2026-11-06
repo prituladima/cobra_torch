@@ -2,6 +2,16 @@ import java.security.MessageDigest
 import java.time.YearMonth
 import java.util.Properties
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        // Markdown to HTML for the plugin's description, which is a section of README.md. BSD-2-Clause license.
+        classpath("org.commonmark:commonmark:0.24.0")
+    }
+}
+
 plugins {
     java
     id("org.jetbrains.intellij.platform") version "2.20.0"
@@ -11,7 +21,8 @@ group = "com.prituladima.plugin.intellij"
 
 // ---- Version yyyy.mm.NNNN, kept in version.properties --------------------------------------------
 // NNNN goes up by 1 on every build (build, assemble, buildPlugin, signPlugin, publishPlugin) whose
-// inputs changed since the last bump: src/, the Gradle build files, gradle.properties. IDE syncs and
+// inputs changed since the last bump: src/, the Gradle build files, gradle.properties, README.md (the
+// plugin's description is in it). IDE syncs and
 // other tasks (runIde, verifyPlugin, ...) use the current version as it is.
 
 /** SHA-256 of the plugin's inputs; CR bytes of text files are ignored, so Windows and Unix checkouts agree. */
@@ -22,7 +33,7 @@ abstract class InputsHash : ValueSource<String, InputsHash.Params> {
 
     override fun obtain(): String {
         val root = parameters.root.get().asFile
-        val files = listOf("build.gradle.kts", "settings.gradle.kts", "gradle.properties").map(root::resolve) +
+        val files = listOf("build.gradle.kts", "settings.gradle.kts", "gradle.properties", "README.md").map(root::resolve) +
             root.resolve("src").walkTopDown().filter { it.isFile }
         val digest = MessageDigest.getInstance("SHA-256")
         for (file in files.filter { it.isFile }.sortedBy { it.relativeTo(root).invariantSeparatorsPath }) {
@@ -94,12 +105,27 @@ dependencies {
 }
 
 intellijPlatform {
-    // Both start a headless IDE during the build; this plugin has no settings pages or forms.
+    // Both start a headless IDE during the build; Settings search still finds the settings page by its name.
     buildSearchableOptions = false
     instrumentCode = false
 
     pluginConfiguration {
         version = pluginVersion
+        // The description in Settings | Plugins and on JetBrains Marketplace is README.md's "What it can do":
+        // the text between its <!-- Plugin description ... --> and <!-- Plugin description end --> comments,
+        // as HTML, so the two never differ. Its images (screenshots/...) load from the repository's master branch.
+        val repository = providers.gradleProperty("pluginRepositoryUrl")
+        description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.zip(repository) { readme, repo ->
+            val start = Regex("<!-- Plugin description\\b[^>]*-->")
+            val end = "<!-- Plugin description end -->"
+            val from = start.find(readme)
+            check(from != null && end in readme) { "README.md needs a <!-- Plugin description --> ... $end section" }
+            val markdown = readme.substring(from.range.last + 1).substringBefore(end)
+            val html = org.commonmark.renderer.html.HtmlRenderer.builder().build()
+                .render(org.commonmark.parser.Parser.builder().build().parse(markdown))
+            val raw = repo.trimEnd('/').replace("https://github.com/", "https://raw.githubusercontent.com/") + "/master/"
+            html.replace(Regex("""src="(?!https?:)([^"]+)"""")) { "src=\"$raw${it.groupValues[1]}\"" }
+        }
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
             untilBuild = provider { null }   // no upper bound: the plugin stays enabled after IDE updates

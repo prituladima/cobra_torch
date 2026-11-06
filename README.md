@@ -5,6 +5,7 @@
 The Cobra torch logos (`logo.png` and the plugin icon) were generated with ChatGPT.
 
 # What it can do
+<!-- Plugin description: from here to "Plugin description end", the plugin's description in the IDE and on JetBrains Marketplace -->
 ## Conda env file
 - Logos of frameworks
 - Connect to remote machine via ssh and install env there
@@ -16,6 +17,10 @@ The Cobra torch logos (`logo.png` and the plugin icon) were generated with ChatG
 ## System monitor
 - Entire computer system info
 <img src="screenshots/2026-11-05_22-02-14.png" alt="Cobra torch" width="700">
+
+The Anaconda, NVIDIA, Intel, AMD, disk makers' and package logos are trademarks of their respective owners and are shown
+only to identify the software. Cobra torch is not affiliated with, endorsed by or sponsored by any of them.
+<!-- Plugin description end -->
 
 ## How to build
 ```sh
