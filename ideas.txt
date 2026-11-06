@@ -4,7 +4,7 @@ Can you add to Tools: [minimalist colorful (please do it) icon] Cobra torch sett
 Settings:
 next settings are default as given.
 [x] Show cpu
-    - [x] [icon of intel or amd] name
+    - [x] [icon of ship company like: intel or amd] name
     - [x] CPU power x of y W.
     - [x] CPU temperature
     - [x] Cores load
@@ -25,4 +25,72 @@ next settings are default as given.
         [x] Graph: time OX/load in % OY. last 1 min.
         [ ] Bar: current load in %.
     [x] List of processes
-[x] Show storage info. Just number
+[x] Show storage info.
+    - [x] [icon of ship company like: intel or amd] name
+    - [x] Graph: time OX/load in memory OY. last 1 min.
+    - [x] Bar: current load in memory.
+
+[x] Testing (when we click this)
+we show information as if we have:
+- 2 epic processors 32 cores each
+- 8 h200 gpu
+- 2 samsung ssd 2TB each.
+
+
+<!-- all elements <item> of list moved to next line if limit exced>
+<!-- all element <item> of one <list> has the same width. example limit is 4, and gpu amount is 6. second line will have 2 gpu aligned to left>
+<vertical>
+    <cpu_block vertical visibility=from_settings>
+        <list vertical>
+            <horizontal>
+                <info_name  visibility=from_settings/>
+                <separator vertical/>
+                <info_energy_consumption   visibility=from_settings/>
+                <separator vertical/>
+                <temperature    visibility=from_settings/>
+            <horizontal>
+            <list horizontal limitPerLine=from_settings>
+                <item horizontal weight=1>
+                    <graph weight=3>
+                    <bar weight=1>
+                </item>
+            </list>
+        </list>
+    </cpu_block>
+
+    <gpu_block visibility=from_settings>
+
+                    <horizontal>
+                        <info_name  visibility=from_settings/>
+                        <separator vertical/>
+                        <info_energy_consumption   visibility=from_settings/>
+                        <separator vertical/>
+                        <temperature    visibility=from_settings/>
+                    <horizontal>
+
+                    <list horizontal limitPerLine=from_settings>
+                        <item vertical>
+                            <item horizontal weight=1>
+                                <info_name weight=1 visibility=from_settings/>
+                                <info_energy_consumption  weight=1 visibility=from_settings/>
+                                <temperature   weight=1  visibility=from_settings/>
+                            </item>
+                            <!-- consumption of gpu>
+                            <item horizontal weight=1>
+                                <graph visibility=from_settings weight=3>
+                                <bar visibility=from_settings color=green weight=1>
+                            </item>
+                            <!-- load of gpu>
+                            <item horizontal weight=1>
+                                                                                <graph visibility=from_settings weight=3>
+                                                                                <bar visibility=from_settings color=green weight=1>
+                                                                            </item>
+                        </item>
+                    </list>
+
+
+    </gpu_block>
+
+    <storage_block visibility=from_settings>
+    </storage_block>
+</vertical>

@@ -300,9 +300,9 @@ final class MonitorPanel extends JPanel implements Disposable {
     body.repaint();
   }
 
-  /** A graph of the last minute, or a bar of now. */
+  /** A graph of the last minute in {@code color}, or a green bar of now of the same size. */
   private static Meter meter(String name, Color color, DoubleFunction<String> format, boolean compact, boolean bar) {
-    return bar ? new BarMeter(name, color, compact) : new AreaChart(name, color, format, compact);
+    return bar ? new BarMeter(name, format, compact) : new AreaChart(name, color, format, compact);
   }
 
   /**

@@ -94,11 +94,20 @@ final class AreaChart extends JComponent implements Meter {
 
   @Override
   public Dimension getPreferredSize() {
-    return new Dimension(JBUI.scale(compact ? 120 : 220), JBUI.scale(compact ? 58 : 112));
+    return preferredSize(compact);
   }
 
   @Override
   public Dimension getMinimumSize() {
+    return minimumSize(compact);
+  }
+
+  /** The chart's size, which {@link BarMeter} takes too, so a bar stands where a graph would. */
+  static Dimension preferredSize(boolean compact) {
+    return new Dimension(JBUI.scale(compact ? 120 : 220), JBUI.scale(compact ? 58 : 112));
+  }
+
+  static Dimension minimumSize(boolean compact) {
     return new Dimension(JBUI.scale(compact ? 60 : 120), JBUI.scale(compact ? 48 : 90));
   }
 
