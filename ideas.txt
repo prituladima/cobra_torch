@@ -9,21 +9,20 @@ next settings are default as given.
     - [x] CPU temperature
     - [x] Cores load
     - Max per line [16][up and down] range
-    Toggle (one answer only):
         [x] Graph: time OX/load in % OY. last 1 min.
-        [ ] Bar: current load in %.
+        [x] Bar: current load in %.
 [x] Show GPU info
     [x] [icon of nvidia] [number x if more than 1] name, [... rest]
     [x] list of GPU power x of y W.
     [x] GPU temperature
     [x] VRAM used
-        Toggle (one answer only):
+
             [x] Graph: time OX/load in memory OY. last 1 min.
-            [ ] Bar: current load in memory.
+            [x] Bar: current load in memory.
     [x] GPU load
-        Toggle (one answer only):
+
         [x] Graph: time OX/load in % OY. last 1 min.
-        [ ] Bar: current load in %.
+        [x] Bar: current load in %.
     [x] List of processes
 [x] Show storage info.
     - [x] [icon of ship company like: intel or amd] name
