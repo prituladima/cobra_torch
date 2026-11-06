@@ -20,30 +20,40 @@ import java.util.function.DoubleFunction;
  * One measure as it is now, the {@link AreaChart}'s other form, the way a task manager draws CPU usage:
  * a vertical green meter of small cells, lit from the bottom up to the value's share of the full scale,
  * the cells above it dim. It takes the chart's place exactly: the same size, the same title row (name,
- * value, full scale) and the same plot box, with "now" below where the chart has its time span.
+ * value, full scale) and the same plot box, with "now" below where the chart has its time span. Next to a
+ * chart of the same measure it is {@code titled} false: the title row stays empty, the chart already says it.
  */
 final class BarMeter extends JComponent implements Meter {
   /** The task-manager green, stepped for the light and the dark theme. */
   static final JBColor GREEN = new JBColor(new Color(0x1f9e3a), new Color(0x3fbf56));
 
   private final String name;
+  private @Nullable String shortName;
   private final DoubleFunction<String> format;
   private final boolean compact;
+  private final boolean titled;
   private double share;
   private double full = 1;
   private @Nullable String valueText;
 
-  BarMeter(String name, DoubleFunction<String> format, boolean compact) {
+  BarMeter(String name, DoubleFunction<String> format, boolean compact, boolean titled) {
     this.name = name;
     this.format = format;
     this.compact = compact;
+    this.titled = titled;
     setOpaque(false);
+  }
+
+  @Override
+  public void setShortName(String shortName) {
+    this.shortName = shortName;
   }
 
   @Override
   public void add(long time, double value, double fullScale, String text) {
     full = fullScale > 0 ? fullScale : 1;
     share = Math.max(0, Math.min(1, value / full));
+    if (!titled && !text.equals(valueText)) setToolTipText(name + " " + text);
     valueText = text;
     repaint();
   }
@@ -88,6 +98,8 @@ final class BarMeter extends JComponent implements Meter {
         g2.fillRect(x0, bottom - (i + 1) * pitch + gap, w, cell);
       }
 
+      if (!titled) return;
+
       // title row as in the chart: name in secondary ink, value in primary ink, the full scale at the right
       int baseline = pad + tm.getAscent();
       String fullText = compact ? "" : format.apply(full);
@@ -98,19 +110,7 @@ final class BarMeter extends JComponent implements Meter {
         g2.drawString(fullText, x1 - am.stringWidth(fullText), baseline);
       }
       g2.setFont(titleFont);
-      g2.setColor(UIUtil.getContextHelpForeground());
-      g2.drawString(name, x0, baseline);
-      if (valueText != null) {
-        int nameW = tm.stringWidth(name + "  ");
-        String text = valueText;
-        int room = w - nameW - fullW;
-        if (tm.stringWidth(text) > room) {   // too narrow: cut, and say so
-          while (text.length() > 1 && tm.stringWidth(text + "…") > room) text = text.substring(0, text.length() - 1);
-          text = text.strip() + "…";
-        }
-        g2.setColor(UIUtil.getLabelForeground());
-        g2.drawString(text, x0 + nameW, baseline);
-      }
+      Meter.title(g2, tm, name, shortName, valueText, x0, baseline, w - fullW);
 
       // where the chart says "1 min ago … now", the bar says it is now
       if (!compact) {

@@ -25,16 +25,18 @@
           conda-forge channel; a click opens the project's website;</li>
       <li>the same logos next to imports in .py files and Jupyter notebooks;</li>
       <li>a click on the GPU (or <b>Tools | System Monitor</b>) opens the System Monitor, for this computer or
-          the connected remote one: the CPU's name, power and temperature and the load of each core; the GPUs'
-          name, the power and temperature of each, the VRAM and load of each; RAM; free disk space; the processes
-          holding VRAM. Loads and memory are graphs of the last minute or bars of now;</li>
+          the connected remote one: each CPU's name, power and temperature and the load of each of its cores; the
+          GPUs' name, power and temperature, then a card for each GPU with its power, temperature, VRAM and load;
+          RAM; each disk with its maker's logo and the space used on it; the processes holding VRAM. Each measure
+          is a graph of the last minute and a green bar of now, side by side;</li>
       <li><b>Tools | Cobra torch settings</b> (Settings | Tools | Cobra torch): what the System Monitor shows,
-          graph or bar, and how many cores a line;</li>
+          graph, bar or both, how many cores and GPUs a line, and a Testing computer (2 AMD EPYC CPUs, 8 NVIDIA
+          H200 GPUs, 2 Samsung SSDs) to see it with big hardware;</li>
       <li><b>File | New | Conda Env File</b>.</li>
     </ul>
     The conda commands run in a new Terminal tab, in the file's directory; on a remote computer, in the
     Run tool window.
-    <p>The Anaconda, NVIDIA, Intel, AMD and package logos are trademarks of their respective owners and are shown only
+    <p>The Anaconda, NVIDIA, Intel, AMD, disk makers' and package logos are trademarks of their respective owners and are shown only
     to identify the software. Cobra torch is not affiliated with, endorsed by or sponsored by any of them.</p>
   ]]></description>
 

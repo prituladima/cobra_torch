@@ -43,6 +43,7 @@ final class AreaChart extends JComponent implements Meter {
   private static final JBColor BASELINE = new JBColor(new Color(0xC9CCD6), new Color(0x4E5157));
 
   private final String name;
+  private @Nullable String shortName;
   private final Color color;
   private final DoubleFunction<String> format;
   private final boolean compact;
@@ -74,6 +75,11 @@ final class AreaChart extends JComponent implements Meter {
     };
     addMouseListener(hover);
     addMouseMotionListener(hover);
+  }
+
+  @Override
+  public void setShortName(String shortName) {
+    this.shortName = shortName;
   }
 
   /** A reading: the value, the full scale it is drawn against, and the title's text for it. */
@@ -205,19 +211,7 @@ final class AreaChart extends JComponent implements Meter {
         g2.drawString(full, x1 - am.stringWidth(full), baseline);
       }
       g2.setFont(titleFont);
-      g2.setColor(UIUtil.getContextHelpForeground());
-      g2.drawString(name, x0, baseline);
-      if (shown != null) {
-        g2.setColor(UIUtil.getLabelForeground());
-        int nameW = tm.stringWidth(name + "  ");
-        String text = shown;
-        int room = w - nameW - fullW;
-        if (tm.stringWidth(text) > room) {   // too narrow: cut, and say so
-          while (text.length() > 1 && tm.stringWidth(text + "…") > room) text = text.substring(0, text.length() - 1);
-          text = text.strip() + "…";
-        }
-        g2.drawString(text, x0 + nameW, baseline);
-      }
+      Meter.title(g2, tm, name, shortName, shown, x0, baseline, w - fullW);
 
       // the time span below
       if (!compact) {

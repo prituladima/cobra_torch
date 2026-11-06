@@ -37,8 +37,18 @@ this project is not affiliated with or endorsed by them, and the logos are not c
 | `beir.png` | beir | github.com/beir-cellar/beir, `images/color_logo_transparent_cropped.png`, the mark only |
 | `kaggle.svg` | kagglehub, kaggle | kaggle.com/static/images/`site-logo.svg`, the "k" of the wordmark, in its blue #20BEFF (the same mark as kaggle.com/static/images/`favicon.ico`) |
 | `wandb.svg` | wandb | github.com/wandb/wandb, `assets/logo.svg`, the dot mark on its background |
-| `cpu/intel.png` | Intel CPUs in the System Monitor | github.com/intel, the avatar of Intel's official GitHub account (avatars.githubusercontent.com/u/17888862), the wordmark cropped; intel.com refuses scripted downloads |
+| `cpu/intel.png` | Intel CPUs and disks in the System Monitor | github.com/intel, the avatar of Intel's official GitHub account (avatars.githubusercontent.com/u/17888862), the wordmark cropped; intel.com refuses scripted downloads |
 | `cpu/amd.svg`, `cpu/amd_dark.svg` | AMD CPUs in the System Monitor | amd.com/content/dam/code/images/header/`amd-header-logo.svg`, the arrow mark only; black as in amd.com's favicon, white as in the header |
+| `disk/samsung.png`, `disk/samsung_dark.png` | Samsung disks in the System Monitor | samsung.com/us, the SAMSUNG wordmark of the site's header (its inline SVG logo); black as in the header, white as on samsung.com's dark header |
+| `disk/western-digital.png` | Western Digital (WD) disks | westerndigital.com/content/dam/store/en-us/portal-assets/logos/`wd-icon.ico`, the site icon |
+| `disk/sandisk.png` | SanDisk disks | sandisk.com/content/dam/sandisk/en-us/portal-assets/logos/`favicon.ico`, the site icon |
+| `disk/seagate.png` | Seagate disks | seagate.com/content/dam/seagate/migrated-assets/ww/redesign/assets/`seagate-logo.svg`, the site's footer logo, the spiral only |
+| `disk/kingston.png` | Kingston disks | kingston.com/`apple-touch-icon.png`, its white background removed |
+| `disk/crucial.png` | Crucial disks | crucial.com/content/dam/crucial/favicon/`android-icon-192x192.png`, the site icon |
+| `disk/micron.png`, `disk/micron_dark.png` | Micron disks | micron.com/content/dam/micron/global/favicon/`apple-icon-180x180.png`, the site icon; white on dark as in micron.com's own `Micron-logo-white.svg` |
+| `disk/sk-hynix.png` | SK hynix disks | news.skhynix.com (SK hynix's newsroom) /wp-content/themes/skhynix/assets/images/`ico_favi.png`, the site icon |
+| `disk/kioxia.png`, `disk/kioxia_dark.png` | Kioxia disks | kioxia.com/etc.clientlibs/kioxia-libs/clientlibs/kioxia/resources/component/`kioxia_logo.svg`, the header logo; on dark in the light grey (#B1B5B8) of kioxia.com's own share image `shared_og.png` |
+| `disk/toshiba.png` | Toshiba disks | global.toshiba/content/dam/toshiba/brand-assets/favicon/`touch-icon_152.png`, the site icon |
 | `toolbar/nvidia.png` | GPU in the env-file toolbar | developer.nvidia.com favicon (the same file as docs.nvidia.com/cuda/_static/favicon.ico), its 16 and 32 px frames |
 | `conda/anaconda.svg`, `conda/anaconda_dark.svg` | `.conda_env.yml` file icon, conda-forge channel, File \| New | the Anaconda ring as drawn by JetBrains for its Python plugin: github.com/JetBrains/intellij-community, `python/conda/common/resources/images/intellij/python/community/impl/conda/common/expui/`; Apache License 2.0 (www.apache.org/licenses/LICENSE-2.0), its copyright line kept in each file |
 

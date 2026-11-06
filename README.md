@@ -5,7 +5,15 @@
 The Cobra torch logos (`logo.png` and the plugin icon) were generated with ChatGPT.
 
 # What it can do
-<img src="screenshots/2026-11-04_20-01-37.png" alt="Cobra torch" width="250"> <img src="screenshots/2026-11-04_20-02-11.png" alt="Cobra torch" width="300">
+## Conda env file
+- Logos of frameworks
+- Connect to remote machine via ssh and install env there
+- See the gpu/cuda version both local/remote
+<img src="screenshots/2026-11-05_22-06-02.png" alt="Cobra torch" width="550"> 
+- Logos of frameworks when import
+<img src="screenshots/2026-11-04_20-02-11.png" alt="Cobra torch" width="300">
+- Entire computer system info
+<img src="screenshots/2026-11-05_22-02-14.png" alt="Cobra torch" width="700">
 
 ## How to build
 ```sh
@@ -51,5 +59,5 @@ Settings | Plugins | Install Plugin from Disk
 | <img src="src/main/resources/icons/packages/kaggle.svg" width="32" height="32"> | `kagglehub`, `kaggle` |
 | <img src="src/main/resources/icons/packages/wandb.svg" width="32" height="32"> | `wandb` |
 
-The Anaconda, NVIDIA, Intel, AMD and package logos are trademarks of their respective owners and are shown only to identify
+The Anaconda, NVIDIA, Intel, AMD, disk makers' and package logos are trademarks of their respective owners and are shown only to identify
 the software. Cobra torch is not affiliated with, endorsed by or sponsored by any of them.

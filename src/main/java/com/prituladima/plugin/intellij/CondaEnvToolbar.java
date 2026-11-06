@@ -245,13 +245,14 @@ public final class CondaEnvToolbar implements FileEditorManagerListener {
     public void update(@NotNull AnActionEvent e) {
       Presentation p = e.getPresentation();
       RemoteHost.Remote remote = RemoteHost.connected(e.getProject());
-      GpuInfo.Gpu gpu = remote != null ? remote.gpu() : GpuInfo.get();
+      boolean testing = CobraTorchSettings.get().testing;   // Settings | Tools | Cobra torch: a made-up computer
+      GpuInfo.Gpu gpu = testing ? SystemSampler.Testing.GPU_INFO : remote != null ? remote.gpu() : GpuInfo.get();
       String value = gpu == null ? null : text.apply(gpu);
       p.setVisible(value != null);
       if (value == null) return;
       p.setIcon(icon);
       p.setText(value, false);
-      p.setDescription(gpu.tooltip() + ". Click for the System Monitor");
+      p.setDescription((testing ? "Testing, made up: " : "") + gpu.tooltip() + ". Click for the System Monitor");
     }
   }
 
