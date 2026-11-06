@@ -51,12 +51,12 @@ public final class RemoteHost implements Disposable {
     return r != null && r.ssh.isConnected() ? r : null;
   }
 
-  /** Blocking: logs in, finds conda and the GPU. Replaces an earlier connection. */
-  void connect(SshConnection.Login login) throws Exception {
+  /** Blocking: logs in, finds conda and the GPU. Replaces an earlier connection. {@code pricePerHour} in $, 0 if free. */
+  void connect(SshConnection.Login login, double pricePerHour) throws Exception {
     disconnect();
     SshConnection ssh = SshConnection.open(login, PathManager.getConfigDir().resolve("cobra-torch").resolve("known_hosts"));
     try {
-      remote = Remote.probe(project, ssh);
+      remote = Remote.probe(project, ssh, pricePerHour);
     } catch (Exception e) {
       ssh.close();
       throw e;
@@ -106,6 +106,7 @@ public final class RemoteHost implements Disposable {
         echo @@conda; find_conda
         echo @@gpu; nvidia-smi %s 2>/dev/null
         echo @@smi; nvidia-smi 2>/dev/null | head -n 12
+        echo @@os; hostname 2>/dev/null; uname -srm 2>/dev/null
         """;
 
     private final Project project;
@@ -113,6 +114,9 @@ public final class RemoteHost implements Disposable {
     private final @Nullable String conda;
     private final @Nullable String condaRoot;
     private final @Nullable GpuInfo.Gpu gpu;
+    private final List<String> os;   // hostname, then the kernel: "gpu-node-7", "Linux 6.8.0-49-generic x86_64"
+    private final long connectedAt = System.currentTimeMillis();
+    private final double pricePerHour;   // $, as entered at login; 0 for a free one
     private final Map<String, EnvState> envs = new ConcurrentHashMap<>();
     private final ScheduledFuture<?> poller;
 
@@ -125,12 +129,15 @@ public final class RemoteHost implements Disposable {
       final AtomicBoolean busy = new AtomicBoolean();
     }
 
-    private Remote(Project project, SshConnection ssh, @Nullable String conda, @Nullable GpuInfo.Gpu gpu) {
+    private Remote(Project project, SshConnection ssh, @Nullable String conda, @Nullable GpuInfo.Gpu gpu, List<String> os,
+                   double pricePerHour) {
       this.project = project;
       this.ssh = ssh;
       this.conda = conda;
       this.condaRoot = conda == null ? null : parent(parent(conda));   // <root>/bin/conda or <root>/condabin/conda
       this.gpu = gpu;
+      this.os = List.copyOf(os);
+      this.pricePerHour = pricePerHour;
       poller = AppExecutorUtil.getAppScheduledExecutorService()
           .scheduleWithFixedDelay(this::poll, POLL_SECONDS, POLL_SECONDS, TimeUnit.SECONDS);
     }
@@ -141,7 +148,7 @@ public final class RemoteHost implements Disposable {
       return slash > 0 ? path.substring(0, slash) : null;
     }
 
-    static Remote probe(Project project, SshConnection ssh) throws Exception {
+    static Remote probe(Project project, SshConnection ssh, double pricePerHour) throws Exception {
       SshConnection.Result r = ssh.exec(PROBE.formatted(String.join(" ", GpuInfo.QUERY_ARGS)), null, 60_000);
       Map<String, List<String>> sections = new LinkedHashMap<>();
       List<String> current = null;
@@ -152,11 +159,47 @@ public final class RemoteHost implements Disposable {
       List<String> condaLines = sections.getOrDefault("conda", List.of());
       String conda = condaLines.isEmpty() ? null : condaLines.get(0);
       GpuInfo.Gpu gpu = GpuInfo.parse(sections.getOrDefault("gpu", List.of()), sections.getOrDefault("smi", List.of()));
-      return new Remote(project, ssh, conda, gpu);
+      return new Remote(project, ssh, conda, gpu, sections.getOrDefault("os", List.of()), pricePerHour);
     }
 
     String label() {
       return ssh.login().label();
+    }
+
+    /** What is known about the connection and the computer, one "name: value" a line, for the disconnect question. */
+    List<String[]> facts() {
+      SshConnection.Login login = ssh.login();
+      List<String[]> facts = new ArrayList<>();
+      facts.add(new String[] {"Login", login.user() + "@" + login.host() + ", port " + login.port()});
+      if (!os.isEmpty()) facts.add(new String[] {"Computer", String.join(", ", os)});
+      if (gpu != null) {
+        facts.add(new String[] {"GPU", gpu.name() + ", " + gpu.vram() + (gpu.cudaVersion() == null ? "" : ", " + gpu.cudaVersion())
+            + ", driver " + gpu.driver()});
+      }
+      facts.add(new String[] {"Conda", conda == null ? "not found" : conda});
+      if (login.keyFile() != null) facts.add(new String[] {"Key", login.keyFile()});
+      facts.add(new String[] {"Connected", "for " + duration(System.currentTimeMillis() - connectedAt)});
+      facts.add(new String[] {"Price", price()});
+      return facts;
+    }
+
+    /** {@code $2.50 per hour, $1.04 so far}; {@code free} for a price of 0. */
+    String price() {
+      if (pricePerHour <= 0) return "free";
+      double hours = (System.currentTimeMillis() - connectedAt) / 3_600_000.0;
+      return money(pricePerHour) + " per hour, " + money(pricePerHour * hours) + " so far";
+    }
+
+    /** {@code $2.50}; {@code $0.004} for prices under a cent. */
+    static String money(double dollars) {
+      return dollars > 0 && dollars < 0.01 ? String.format(java.util.Locale.ROOT, "$%.3f", dollars)
+          : String.format(java.util.Locale.ROOT, "$%.2f", dollars);
+    }
+
+    /** {@code 40 s}, {@code 12 min}, {@code 3 h 5 min}. */
+    static String duration(long ms) {
+      long s = ms / 1000, min = s / 60, h = min / 60;
+      return h > 0 ? h + " h " + min % 60 + " min" : min > 0 ? min + " min" : s + " s";
     }
 
     @Nullable GpuInfo.Gpu gpu() {

@@ -1,0 +1,28 @@
+When I connect to the remote make price per hour to be required field.
+
+Can you add to Tools: [minimalist colorful (please do it) icon] Cobra torch settings. when opened: It should have
+Settings:
+next settings are default as given.
+[x] Show cpu
+    - [x] [icon of intel or amd] name
+    - [x] CPU power x of y W.
+    - [x] CPU temperature
+    - [x] Cores load
+    - Max per line [16][up and down] range
+    Toggle (one answer only):
+        [x] Graph: time OX/load in % OY. last 1 min.
+        [ ] Bar: current load in %.
+[x] Show GPU info
+    [x] [icon of nvidia] [number x if more than 1] name, [... rest]
+    [x] list of GPU power x of y W.
+    [x] GPU temperature
+    [x] VRAM used
+        Toggle (one answer only):
+            [x] Graph: time OX/load in memory OY. last 1 min.
+            [ ] Bar: current load in memory.
+    [x] GPU load
+        Toggle (one answer only):
+        [x] Graph: time OX/load in % OY. last 1 min.
+        [ ] Bar: current load in %.
+    [x] List of processes
+[x] Show storage info. Just number

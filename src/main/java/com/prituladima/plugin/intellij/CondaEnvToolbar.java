@@ -9,7 +9,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -17,7 +16,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
@@ -36,14 +35,13 @@ import java.util.function.Function;
 
 /**
  * The toolbar at the top of every .conda_env.yml editor, like the Jupyter notebook toolbar:
- * conda environment size | remote computer | NVIDIA GPU | VRAM | CUDA | update, open JupyterLab, open the folder,
- * connect over SSH, remove. While connected, all of it is about the remote computer ({@link RemoteHost}).
+ * conda environment size | this computer or the remote one | NVIDIA GPU | VRAM | CUDA | update, open JupyterLab,
+ * open the folder, remove. While connected over SSH, all of it is about the remote computer ({@link RemoteHost}).
  * Without an NVIDIA GPU its items hide, and the platform drops the separators left doubled.
  * Registered as a project listener on editor openings (META-INF/plugin.xml).
  */
 public final class CondaEnvToolbar implements FileEditorManagerListener {
   private static final Key<Boolean> INSTALLED = Key.create("cobratorch.condaEnvToolbar");
-  private static final Icon NVIDIA = IconLoader.getIcon("/icons/toolbar/nvidia.png", CondaEnvToolbar.class);
 
   @Override
   public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
@@ -70,9 +68,9 @@ public final class CondaEnvToolbar implements FileEditorManagerListener {
     DefaultActionGroup group = new DefaultActionGroup();
     group.add(new EnvSizeLabel(project, file));
     group.addSeparator();
-    group.add(new HostLabel());
+    group.add(new WhereLabel(project));
     group.addSeparator();
-    group.add(new GpuLabel(project, NVIDIA, GpuInfo.Gpu::name));
+    group.add(new GpuLabel(project, CondaIcons.NVIDIA, GpuInfo.Gpu::name));
     group.addSeparator();
     group.add(new GpuLabel(project, null, GpuInfo.Gpu::vram));
     group.addSeparator();
@@ -81,7 +79,6 @@ public final class CondaEnvToolbar implements FileEditorManagerListener {
     group.add(new CommandButton(CondaEnv.Command.UPDATE, file));
     group.add(new CommandButton(CondaEnv.Command.JUPYTER, file));
     group.add(new FolderButton(file));
-    group.add(new RemoteButton());
     group.add(new CommandButton(CondaEnv.Command.REMOVE, file));
     ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("CobraTorchCondaEnvToolbar", group, true);
     toolbar.setTargetComponent(editor.getComponent());
@@ -164,17 +161,61 @@ public final class CondaEnvToolbar implements FileEditorManagerListener {
     }
   }
 
-  /** Server icon + "root@ssh5.vast.ai:41234" while connected to a remote computer. */
-  private static final class HostLabel extends Label {
+  /**
+   * Which computer the toolbar is about: "This computer", or "Remote computer" while connected over SSH. A click
+   * on "This computer" connects (the SSH login dialog); on "Remote computer", it shows the connection and asks
+   * whether to disconnect.
+   */
+  private static final class WhereLabel extends Label {
+    private final Project project;
+
+    WhereLabel(Project project) {
+      this.project = project;
+    }
+
+    @Override
+    public @NotNull JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
+      return clickable(super.createCustomComponent(presentation, place), () -> {
+        if (project.isDisposed()) return;
+        RemoteHost.Remote remote = RemoteHost.connected(project);
+        if (remote == null) new RemoteLoginDialog(project).show();
+        else askDisconnect(project, remote);
+      });
+    }
+
     @Override
     public void update(@NotNull AnActionEvent e) {
-      RemoteHost.Remote remote = RemoteHost.connected(e.getProject());
+      RemoteHost.Remote remote = RemoteHost.connected(project);
       Presentation p = e.getPresentation();
-      p.setVisible(remote != null);
-      if (remote == null) return;
-      p.setIcon(AllIcons.Webreferences.Server);
-      p.setText(remote.label(), false);
-      p.setDescription("Connected over SSH: the toolbar is about this computer, and its commands run there");
+      if (remote == null) {
+        p.setIcon(AllIcons.Nodes.Desktop);
+        p.setText("This computer", false);
+        p.setDescription("The toolbar is about this computer. Click to connect to a remote computer over SSH");
+      } else {
+        p.setIcon(AllIcons.Webreferences.Server);
+        p.setText("Remote computer", false);
+        p.setDescription(remote.label() + " over SSH, " + remote.price() + ": the toolbar is about it, and its commands run there. "
+            + "Click to see the connection");
+      }
+    }
+
+    /** The connection's details, then [Disconnect] [Keep the Connection]. */
+    private static void askDisconnect(Project project, RemoteHost.Remote remote) {
+      StringBuilder html = new StringBuilder("<html><table cellpadding='1'>");
+      for (String[] fact : remote.facts()) {
+        html.append("<tr><td valign='top'>").append(escape(fact[0])).append(":</td><td>").append(escape(fact[1])).append("</td></tr>");
+      }
+      html.append("</table><br>Do you want to disconnect?</html>");
+      boolean disconnect = MessageDialogBuilder.yesNo("Remote Computer", html.toString())
+          .yesText("Disconnect")
+          .noText("Keep the Connection")
+          .icon(AllIcons.Webreferences.Server)
+          .ask(project);
+      if (disconnect && RemoteHost.connected(project) == remote) RemoteHost.getInstance(project).disconnect();
+    }
+
+    private static String escape(String s) {
+      return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
   }
 
@@ -282,38 +323,6 @@ public final class CondaEnvToolbar implements FileEditorManagerListener {
     public void actionPerformed(@NotNull AnActionEvent e) {
       Path prefix = prefix();
       if (prefix != null) RevealFileAction.openDirectory(prefix);
-    }
-  }
-
-  /** Connects to a remote computer over SSH (a login dialog); pressed while connected, a click disconnects. */
-  private static final class RemoteButton extends ToggleAction implements DumbAware {
-    RemoteButton() {
-      super("Connect to a remote computer over SSH", null, AllIcons.Nodes.Ssh);
-    }
-
-    @Override
-    public @NotNull ActionUpdateThread getActionUpdateThread() {
-      return ActionUpdateThread.BGT;
-    }
-
-    @Override
-    public boolean isSelected(@NotNull AnActionEvent e) {
-      return RemoteHost.connected(e.getProject()) != null;
-    }
-
-    @Override
-    public void setSelected(@NotNull AnActionEvent e, boolean state) {
-      Project project = e.getProject();
-      if (project == null) return;
-      if (state) new RemoteLoginDialog(project).show();
-      else RemoteHost.getInstance(project).disconnect();
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-      super.update(e);
-      RemoteHost.Remote remote = RemoteHost.connected(e.getProject());
-      e.getPresentation().setText(remote == null ? "Connect to a remote computer over SSH" : "Disconnect from " + remote.label());
     }
   }
 }

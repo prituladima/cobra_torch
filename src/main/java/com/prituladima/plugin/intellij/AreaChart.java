@@ -28,7 +28,7 @@ import java.util.function.DoubleFunction;
  * axis, hairline gridlines, and the name and current value as text above. Hovering shows the value at
  * that moment. {@code compact} is the small version used for each CPU core.
  */
-final class AreaChart extends JComponent {
+final class AreaChart extends JComponent implements Meter {
   static final long WINDOW_MS = 60_000;
   private static final int CAPACITY = 128;   // a minute at one reading a second, with room to spare
 
@@ -37,6 +37,7 @@ final class AreaChart extends JComponent {
   static final JBColor ORANGE = new JBColor(new Color(0xeb6834), new Color(0xd95926));
   static final JBColor AQUA = new JBColor(new Color(0x1baf7a), new Color(0x199e70));
   static final JBColor YELLOW = new JBColor(new Color(0xeda100), new Color(0xc98500));
+  static final JBColor MAGENTA = new JBColor(new Color(0xe87ba4), new Color(0xd55181));
 
   private static final JBColor GRID = new JBColor(new Color(0xE4E5E8), new Color(0x393B40));
   private static final JBColor BASELINE = new JBColor(new Color(0xC9CCD6), new Color(0x4E5157));
@@ -76,7 +77,8 @@ final class AreaChart extends JComponent {
   }
 
   /** A reading: the value, the full scale it is drawn against, and the title's text for it. */
-  void add(long time, double value, double fullScale, String text) {
+  @Override
+  public void add(long time, double value, double fullScale, String text) {
     if (size == CAPACITY) {
       System.arraycopy(times, 1, times, 0, CAPACITY - 1);
       System.arraycopy(values, 1, values, 0, CAPACITY - 1);
@@ -201,7 +203,10 @@ final class AreaChart extends JComponent {
         int nameW = tm.stringWidth(name + "  ");
         String text = shown;
         int room = w - nameW - fullW;
-        while (text.length() > 1 && tm.stringWidth(text) > room) text = text.substring(0, text.length() - 1);
+        if (tm.stringWidth(text) > room) {   // too narrow: cut, and say so
+          while (text.length() > 1 && tm.stringWidth(text + "…") > room) text = text.substring(0, text.length() - 1);
+          text = text.strip() + "…";
+        }
         g2.drawString(text, x0 + nameW, baseline);
       }
 

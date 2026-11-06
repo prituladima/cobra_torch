@@ -7,8 +7,8 @@
     Tools for conda environment files named <code>.conda_env.yml</code>:
     <ul>
       <li>the conda icon instead of the YAML icon;</li>
-      <li>a toolbar above the editor: the environment's size (or "Conda env is not installed"), the NVIDIA GPU
-          (model | VRAM | CUDA version), and buttons that run
+      <li>a toolbar above the editor: the environment's size (or "Conda env is not installed"), the computer
+          (this one or the remote one), the NVIDIA GPU (model | VRAM | CUDA version), and buttons that run
           <code>conda env update -f .conda_env.yml --prune</code>,
           <code>conda run --live-stream -n &lt;name&gt; jupyter lab</code> and
           <code>conda env remove -n &lt;name&gt;</code>; a button opens the environment's folder in the file
@@ -16,20 +16,25 @@
       <li>a click on the size lists every conda environment with its size and a remove button;</li>
       <li>the installed version after each dependency that has none in the file, as a hint that is not part
           of the file;</li>
-      <li>a remote computer over SSH (password, key or SSH agent): the toolbar then shows its environment,
-          GPU and versions, and its buttons run there; JupyterLab opens here through an SSH tunnel;</li>
+      <li>a click on "This computer" connects to a remote computer over SSH (password, key or SSH agent; the
+          key is found in ~/.ssh; the price per hour is asked, and the cost so far is shown): the toolbar then
+          shows its environment, GPU and versions, and its buttons run there; JupyterLab opens here through an
+          SSH tunnel; a click on "Remote computer" shows the connection and disconnects;</li>
       <li>the official logo next to well-known dependencies (Python, pandas, NumPy, SciPy, scikit-learn,
           Matplotlib, Plotly, Jupyter, PyTorch, Hugging Face, vLLM, ...) and the conda icon next to the
           conda-forge channel; a click opens the project's website;</li>
       <li>the same logos next to imports in .py files and Jupyter notebooks;</li>
-      <li>a click on the GPU (or <b>Tools | System Monitor</b>) opens the System Monitor: every CPU core, RAM,
-          VRAM and GPU load over the last minute, CPU and GPU temperature, GPU power, free disk space and the
-          processes holding VRAM, for this computer or the connected remote one;</li>
+      <li>a click on the GPU (or <b>Tools | System Monitor</b>) opens the System Monitor, for this computer or
+          the connected remote one: the CPU's name, power and temperature and the load of each core; the GPUs'
+          name, the power and temperature of each, the VRAM and load of each; RAM; free disk space; the processes
+          holding VRAM. Loads and memory are graphs of the last minute or bars of now;</li>
+      <li><b>Tools | Cobra torch settings</b> (Settings | Tools | Cobra torch): what the System Monitor shows,
+          graph or bar, and how many cores a line;</li>
       <li><b>File | New | Conda Env File</b>.</li>
     </ul>
     The conda commands run in a new Terminal tab, in the file's directory; on a remote computer, in the
     Run tool window.
-    <p>The Anaconda, NVIDIA and package logos are trademarks of their respective owners and are shown only
+    <p>The Anaconda, NVIDIA, Intel, AMD and package logos are trademarks of their respective owners and are shown only
     to identify the software. Cobra torch is not affiliated with, endorsed by or sponsored by any of them.</p>
   ]]></description>
 
@@ -55,6 +60,9 @@
                                           isEnabledByDefault="true" group="VALUES_GROUP"
                                           bundle="messages.CondaEnvBundle"
                                           nameKey="inlay.versions.name" descriptionKey="inlay.versions.description"/>
+    <!-- Settings | Tools | Cobra torch: what the System Monitor shows -->
+    <applicationConfigurable parentId="tools" id="com.prituladima.cobratorch.settings" displayName="Cobra torch"
+                             instance="com.prituladima.plugin.intellij.CobraTorchConfigurable"/>
   </extensions>
 
   <projectListeners>
@@ -73,6 +81,12 @@
             class="com.prituladima.plugin.intellij.OpenMonitorAction"
             text="System Monitor" description="CPU cores, RAM, VRAM, GPU load and temperatures over the last minute"
             icon="AllIcons.Toolwindows.ToolWindowProfiler">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+    <action id="com.prituladima.cobratorch.Settings"
+            class="com.prituladima.plugin.intellij.OpenSettingsAction"
+            text="Cobra torch settings" description="What the System Monitor shows"
+            icon="/icons/settings/cobraTorch.svg">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </action>
   </actions>

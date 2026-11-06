@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <!-- Cobra torch settings: a cobra (aqua) rising beside a torch (blue) with its flame (orange, yellow) -->
+  <path d="M10.7 8.3h3.2l-1 6.9h-1.2z" fill="#2A78D6"/>
+  <path d="M12.3 0.7c1.7 1.6 2.6 3.2 2.3 4.8-0.2 1.3-1.1 2.1-2.3 2.1s-2.1-0.8-2.3-2.1c-0.2-1.3 0.5-2.4 1.3-3 0.1 0.9 0.5 1.4 0.9 1.6 0.3-1.1 0.4-2.3 0.1-3.4z" fill="#EB6834"/>
+  <path d="M12.3 4.3c0.7 0.6 1 1.3 0.9 1.9-0.1 0.5-0.4 0.8-0.9 0.8s-0.8-0.3-0.9-0.8c-0.1-0.6 0.2-1.3 0.9-1.9z" fill="#EDA100"/>
+  <path d="M4.6 8.4v1.5c0 2 1.4 3.2 3.4 3.2 1.3 0 2.5-0.4 3.7-1.1" fill="none" stroke="#1BAF7A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M4.6 2.2c2.8 0.6 3.6 3.4 1.6 6.6h-3.2c-2-3.2-1.2-6 1.6-6.6z" fill="#1BAF7A"/>
+  <path d="M4.6 4.2c0.9 0.5 1.1 1.8 0.4 3.3h-0.8c-0.7-1.5-0.5-2.8 0.4-3.3z" fill="#0E7A55"/>
+  <ellipse cx="4.6" cy="2" rx="1.25" ry="1.05" fill="#1BAF7A"/>
+</svg>

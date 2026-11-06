@@ -1,6 +1,10 @@
 package com.prituladima.plugin.intellij;
 
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindow;
@@ -9,6 +13,8 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * The System Monitor tool window ({@link MonitorPanel}). Hidden until first opened, from a click on the GPU
@@ -29,6 +35,13 @@ public final class MonitorToolWindowFactory implements ToolWindowFactory, DumbAw
     content.setComponent(panel);
     Disposer.register(content, panel);
     toolWindow.getContentManager().addContent(content);
+    toolWindow.setTitleActions(List.of(new DumbAwareAction("Cobra torch Settings", "What the System Monitor shows",
+        AllIcons.General.GearPlain) {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        ShowSettingsUtil.getInstance().showSettingsDialog(project, CobraTorchConfigurable.class);
+      }
+    }));
   }
 
   static void open(Project project) {

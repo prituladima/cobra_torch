@@ -18,6 +18,8 @@ this project is not affiliated with or endorsed by them, and the logos are not c
 | `plotly.svg`, `plotly_dark.svg` | plotly | plotly.com/all_static/images/`logo-black.svg`, `logo-white.svg`, the mark only |
 | `pillow.png` | pillow | github.com/python-pillow/pillow-logo, `pillow-logo-248x250.png` |
 | `tqdm.png` | tqdm | github.com/tqdm/tqdm, `logo.png` |
+| `openpyxl.png` | openpyxl | foss.heptapod.net/openpyxl/openpyxl, `doc/logo.png` (openpyxl.readthedocs.io/en/stable/_static/`logo.png`), the bowl mark only, drop shadow removed, its translucent navy flattened over white as the docs page shows it |
+| `cairosvg.png` | cairosvg | CourtBouillon, its maintainer (CairoSVG has no logo of its own): courtbouillon.org/static/images/`favicon.png`, the site icon |
 | `jupyter.svg` | jupyter, jupyterlab, notebook, ipywidgets | github.com/jupyter/design, `logos/Logo Mark/logomark-orangebody-greyplanets` |
 | `ipython.png` | ipython, ipykernel | ipython.org, `ipython.github.com/ipython-logo.png` (the site icon) |
 | `gradio.svg` | gradio | github.com/gradio-app/gradio, `js/_website/src/lib/assets/brand-assets/gradio-logo.svg` |
@@ -35,6 +37,8 @@ this project is not affiliated with or endorsed by them, and the logos are not c
 | `beir.png` | beir | github.com/beir-cellar/beir, `images/color_logo_transparent_cropped.png`, the mark only |
 | `kaggle.svg` | kagglehub, kaggle | kaggle.com/static/images/`site-logo.svg`, the "k" of the wordmark, in its blue #20BEFF (the same mark as kaggle.com/static/images/`favicon.ico`) |
 | `wandb.svg` | wandb | github.com/wandb/wandb, `assets/logo.svg`, the dot mark on its background |
+| `cpu/intel.png` | Intel CPUs in the System Monitor | github.com/intel, the avatar of Intel's official GitHub account (avatars.githubusercontent.com/u/17888862), the wordmark cropped; intel.com refuses scripted downloads |
+| `cpu/amd.svg`, `cpu/amd_dark.svg` | AMD CPUs in the System Monitor | amd.com/content/dam/code/images/header/`amd-header-logo.svg`, the arrow mark only; black as in amd.com's favicon, white as in the header |
 | `toolbar/nvidia.png` | GPU in the env-file toolbar | developer.nvidia.com favicon (the same file as docs.nvidia.com/cuda/_static/favicon.ico), its 16 and 32 px frames |
 | `conda/anaconda.svg`, `conda/anaconda_dark.svg` | `.conda_env.yml` file icon, conda-forge channel, File \| New | the Anaconda ring as drawn by JetBrains for its Python plugin: github.com/JetBrains/intellij-community, `python/conda/common/resources/images/intellij/python/community/impl/conda/common/expui/`; Apache License 2.0 (www.apache.org/licenses/LICENSE-2.0), its copyright line kept in each file |
 
@@ -42,3 +46,5 @@ No official logo was found (repository, docs site and favicon checked) for pip, 
 h5py, flash-linear-attention, autoawq, jiwer, sacrebleu, pycocoevalcap, rank-bm25, soundfile, gdown,
 jsonschema, lpips, mamba-ssm, nvidia-modelopt, rouge-score, sae-lens, sageattention, torch-pruning and
 torchprofile, so they get none.
+
+`settings/cobraTorch.svg` (Tools | Cobra torch settings) is this project's own drawing, under its MIT license.

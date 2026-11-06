@@ -12,7 +12,7 @@ import java.util.Map;
  * Dependencies that get their official logo in the gutter; a click opens the project's website:
  * its own site if it has one, else its official docs site, else its repository.
  * Projects without a logo of their own use their organization's (Hugging Face, PyTorch, Kaggle,
- * EleutherAI) or parent project's (Jupyter, IPython, pandas, SciPy).
+ * EleutherAI, CourtBouillon) or parent project's (Jupyter, IPython, pandas, SciPy).
  * <p>
  * To add one: a constant here and its logo in {@code resources/icons/packages}: a 16x16 SVG, or a
  * 16x16 PNG plus a 32x32 {@code <name>@2x.png}; an optional {@code <name>_dark.svg} is used by dark themes.
@@ -32,6 +32,8 @@ enum KnownPackage implements GutterLink {
   PLOTLY("Plotly", "https://plotly.com/python/", "plotly.svg", "plotly"),
   PILLOW("Pillow", "https://python-pillow.org", "pillow.png", "pillow"),
   TQDM("tqdm", "https://tqdm.github.io", "tqdm.png", "tqdm"),
+  OPENPYXL("openpyxl", "https://openpyxl.readthedocs.io", "openpyxl.png", "openpyxl"),
+  CAIROSVG("CairoSVG", "https://cairosvg.org", "cairosvg.png", "cairosvg"),
 
   // Jupyter
   JUPYTER("Jupyter", "https://jupyter.org", "jupyter.svg", "jupyter"),

@@ -32,9 +32,10 @@ final class CondaEnv {
    * Nothing is checked first: if the environment does not exist, conda says so in the terminal.
    */
   enum Command {
-    UPDATE(AllIcons.Actions.Refresh, "Update environment", "update"),
+    // the IDE's "Load Maven/Gradle Changes" arrows: the environment is brought in line with the file
+    UPDATE(AllIcons.Actions.BuildLoadChanges, "Update environment", "update"),
     JUPYTER(KnownPackage.JUPYTERLAB.icon(), "Open JupyterLab", "jupyter"),
-    REMOVE(AllIcons.Actions.GC, "Remove environment", "remove");   // GC renders as a trash bin
+    REMOVE(AllIcons.Actions.ClearCash, "Remove environment", "remove");   // the broom of the IDE's "clear" actions
 
     final Icon icon;
     final String title;

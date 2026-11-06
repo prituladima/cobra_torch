@@ -1,9 +1,13 @@
 package com.prituladima.plugin.intellij;
 
 import com.jcraft.jsch.AgentIdentityRepository;
+import com.jcraft.jsch.Identity;
+import com.jcraft.jsch.IdentityRepository;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.KeyPair;
+import com.jcraft.jsch.OpenSSHConfig;
 import com.jcraft.jsch.SSHAgentConnector;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
@@ -21,6 +25,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * One SSH connection (JSch, pure Java: the same on Linux, Windows and macOS). Login with a password, a key
@@ -85,9 +90,53 @@ final class SshConnection implements AutoCloseable {
         return fallback;
       }
     }
+  }
 
-    private static String expandHome(String path) {
-      return path.startsWith("~") ? System.getProperty("user.home") + path.substring(1) : path;
+  /** {@code ~/.ssh/id_ed25519} -> {@code /home/me/.ssh/id_ed25519}, or {@code C:\Users\me\.ssh\id_ed25519}. */
+  static String expandHome(String path) {
+    if (!path.equals("~") && !path.startsWith("~/") && !path.startsWith("~\\")) return path;
+    return Path.of(System.getProperty("user.home"), path.substring(1).replaceFirst("^[/\\\\]", "")).toString();
+  }
+
+  /** The names ssh-keygen gives keys, in the order they are looked for in ~/.ssh (the same folder on Windows). */
+  static final List<String> STANDARD_KEYS = List.of("id_ed25519", "id_ecdsa", "id_rsa");
+
+  /**
+   * The key to log in to {@code host} with, without asking: its IdentityFile in ~/.ssh/config, else the first
+   * standard key in ~/.ssh; null when there is none.
+   */
+  static @Nullable String defaultKey(String host) {
+    Path ssh = Path.of(System.getProperty("user.home"), ".ssh");
+    Path config = ssh.resolve("config");
+    if (!host.isBlank() && Files.isRegularFile(config)) {
+      try {
+        String[] files = OpenSSHConfig.parseFile(config.toString()).getConfig(host).getValues("IdentityFile");
+        for (String f : files == null ? new String[0] : files) {
+          if (f.contains("%")) continue;   // %d, %u, %h: not worth expanding here
+          String path = expandHome(f.trim());
+          if (Files.isRegularFile(Path.of(path))) return path;
+        }
+      } catch (IOException | RuntimeException ignored) {
+        // an unreadable config: the standard keys
+      }
+    }
+    for (String name : STANDARD_KEYS) {
+      Path key = ssh.resolve(name);
+      if (Files.isRegularFile(key)) return key.toString();
+    }
+    return null;
+  }
+
+  private static boolean isEncrypted(JSch jsch, String keyFile) {
+    try {
+      KeyPair pair = KeyPair.load(jsch, keyFile);
+      try {
+        return pair.isEncrypted();
+      } finally {
+        pair.dispose();
+      }
+    } catch (JSchException e) {
+      return false;   // JSch will say what is wrong with it when it logs in
     }
   }
 
@@ -108,10 +157,16 @@ final class SshConnection implements AutoCloseable {
     jsch.setKnownHosts(knownHosts.toString());
     byte[] passphrase = login.secret().length == 0 ? null : new String(login.secret()).getBytes(StandardCharsets.UTF_8);
     if (login.keyFile() != null) {
-      jsch.addIdentity(login.keyFile(), passphrase);
+      // the key of the field first, then the SSH agent's keys; a key locked with a passphrase that was not
+      // given is left to the agent, which holds it unlocked once it was added there
+      boolean locked = passphrase == null && isEncrypted(jsch, login.keyFile());
+      if (!locked) jsch.addIdentity(login.keyFile(), passphrase);
+      if (!addAgent(jsch) && locked) {
+        throw new JSchException("The key " + login.keyFile() + " is locked with a passphrase: enter it as the password");
+      }
     } else if (!useAgent(jsch)) {
       Path ssh = Path.of(System.getProperty("user.home"), ".ssh");
-      for (String name : List.of("id_ed25519", "id_ecdsa", "id_rsa")) {
+      for (String name : STANDARD_KEYS) {
         Path key = ssh.resolve(name);
         if (Files.isRegularFile(key)) {
           try {
@@ -138,7 +193,7 @@ final class SshConnection implements AutoCloseable {
         throw new JSchException("The host key of " + login.host() + " is not the one seen before. If this is a new "
             + "machine at the same address, delete the line of " + login.host() + " in " + knownHosts + " and connect again.");
       }
-      if (m.equals("Auth fail") || m.startsWith("Auth cancel") || m.contains("Too many authentication failures")) {
+      if (m.startsWith("Auth fail") || m.startsWith("Auth cancel") || m.contains("Too many authentication failures")) {
         throw new JSchException("Login refused for " + login.label() + ": wrong password or key");
       }
       throw e;
@@ -156,6 +211,49 @@ final class SshConnection implements AutoCloseable {
       return true;
     } catch (Exception | LinkageError e) {
       return false;
+    }
+  }
+
+  /** The SSH agent's keys after the ones already added; false without an agent. */
+  private static boolean addAgent(JSch jsch) {
+    IdentityRepository local = jsch.getIdentityRepository();
+    if (!useAgent(jsch)) return false;
+    jsch.setIdentityRepository(new Both(local, jsch.getIdentityRepository()));
+    return true;
+  }
+
+  /** The keys of two places, the first place's tried first. */
+  private record Both(IdentityRepository first, IdentityRepository second) implements IdentityRepository {
+    @Override
+    public String getName() {
+      return first.getName() + " + " + second.getName();
+    }
+
+    @Override
+    public int getStatus() {
+      return RUNNING;
+    }
+
+    @Override
+    public Vector<Identity> getIdentities() {
+      Vector<Identity> all = new Vector<>(first.getIdentities());
+      all.addAll(second.getIdentities());
+      return all;
+    }
+
+    @Override
+    public boolean add(byte[] identity) {
+      return first.add(identity);
+    }
+
+    @Override
+    public boolean remove(byte[] blob) {
+      return first.remove(blob) | second.remove(blob);
+    }
+
+    @Override
+    public void removeAll() {
+      first.removeAll();
     }
   }
 

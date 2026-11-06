@@ -31,6 +31,8 @@ Settings | Plugins | Install Plugin from Disk
 | <picture><source media="(prefers-color-scheme: dark)" srcset="src/main/resources/icons/packages/plotly_dark.svg"><img src="src/main/resources/icons/packages/plotly.svg" width="32" height="32"></picture> | `plotly` |
 | <img src="src/main/resources/icons/packages/pillow@2x.png" width="32" height="32"> | `pillow` |
 | <img src="src/main/resources/icons/packages/tqdm@2x.png" width="32" height="32"> | `tqdm` |
+| <img src="src/main/resources/icons/packages/openpyxl@2x.png" width="32" height="32"> | `openpyxl` |
+| <img src="src/main/resources/icons/packages/cairosvg@2x.png" width="32" height="32"> | `cairosvg` |
 | <img src="src/main/resources/icons/packages/jupyter.svg" width="32" height="32"> | `jupyter`, `jupyterlab`, `notebook`, `ipywidgets` |
 | <img src="src/main/resources/icons/packages/ipython@2x.png" width="32" height="32"> | `ipython`, `ipykernel` |
 | <img src="src/main/resources/icons/packages/gradio.svg" width="32" height="32"> | `gradio` |
@@ -49,5 +51,5 @@ Settings | Plugins | Install Plugin from Disk
 | <img src="src/main/resources/icons/packages/kaggle.svg" width="32" height="32"> | `kagglehub`, `kaggle` |
 | <img src="src/main/resources/icons/packages/wandb.svg" width="32" height="32"> | `wandb` |
 
-The Anaconda, NVIDIA and package logos are trademarks of their respective owners and are shown only to identify
+The Anaconda, NVIDIA, Intel, AMD and package logos are trademarks of their respective owners and are shown only to identify
 the software. Cobra torch is not affiliated with, endorsed by or sponsored by any of them.
